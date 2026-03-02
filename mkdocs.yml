@@ -1,0 +1,8 @@
+site_name: TCGA-COAD CMS ML Pipeline
+theme:
+  name: material
+nav:
+  - Inici: index.md
+  - KPIs: KPI_CHECKLIST.md
+  - Pipeline: pipeline.md
+  - Reproductibilitat: reproductibility.md
