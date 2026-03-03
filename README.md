@@ -11,3 +11,11 @@
 - `docs/`: documentació (pipeline, reproductibilitat, KPIs)
 - `data/manifests/`: manifests/metadata (sense dades grans)
 - `results/`: sortides de cada run
+
+## Documentació (GitHub Pages)
+Web: <POSA_AQUÍ_LA_TEVA_URL>
+
+### Actualitzar la documentació
+- Edita fitxers a `docs/` o `mkdocs.yml`
+- Fes `git commit` + `git push` a `main`
+- GitHub Actions desplega automàticament a `gh-pages`
