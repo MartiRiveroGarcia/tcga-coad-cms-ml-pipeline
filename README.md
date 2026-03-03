@@ -13,7 +13,7 @@
 - `results/`: sortides de cada run
 
 ## Documentació (GitHub Pages)
-Web: <POSA_AQUÍ_LA_TEVA_URL>
+Web: https://martiriverogarcia.github.io/tcga-coad-cms-ml-pipeline/
 
 ### Actualitzar la documentació
 - Edita fitxers a `docs/` o `mkdocs.yml`
