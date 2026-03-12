@@ -1,0 +1,25 @@
+# MkDocs build
+site/
+
+# Data — only manifests are tracked
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environments
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db

@@ -19,3 +19,14 @@ Aquest projecte NO puja dades grans al repositori. El que versionem és la **tra
    - Serveix per reconstruir exactament el dataset i auditar canvis
 
 > Objectiu: que qualsevol persona pugui reconstruir el mateix dataset només amb aquests fitxers.
+
+## Carpetes de dades i política de git
+
+| Carpeta | Contingut | Versionat? |
+|---------|-----------|------------|
+| `data/raw/` | Fitxers descarregats (RNA-seq counts, etc.) | **No** — gitignored |
+| `data/processed/` | Sortides de preprocessament | **No** — gitignored |
+| `data/manifests/` | Metadades i instruccions de descàrrega | **Sí** |
+
+- Les carpetes `data/raw/` i `data/processed/` estan al `.gitignore`.
+- Per reconstruir les dades, seguiu les instruccions del manifest (`data/manifests/`).
