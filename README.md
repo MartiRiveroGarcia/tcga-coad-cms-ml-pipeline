@@ -19,3 +19,4 @@ Web: https://martiriverogarcia.github.io/tcga-coad-cms-ml-pipeline/
 - Edita fitxers a `docs/` o `mkdocs.yml`
 - Fes `git commit` + `git push` a `main`
 - GitHub Actions desplega automàticament a `gh-pages`
+
