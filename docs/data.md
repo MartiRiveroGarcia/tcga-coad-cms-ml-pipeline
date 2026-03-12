@@ -53,3 +53,36 @@ Aquesta carpeta conté fitxers **petits** (manifest i metadades) que permeten re
 **3) `gdc_sample_sheet.<data>.tsv`**
 - Taula “humana” exportada del GDC per fer mapeig entre fitxers i casos/mostres.
 - La capçalera exacta es pot veure amb: `head -n 1 data/metadata/gdc_sample_sheet.<data>.tsv`.
+
+## Instal·lació de l’eina de descàrrega (GDC Data Transfer Tool)
+
+Per descarregar fitxers del GDC a partir d’un manifest, el projecte utilitza el **GDC Data Transfer Tool (gdc-client)**, instal·lat des de binaris oficials (cross-platform). ([GDC Data Transfer Tool](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool))
+
+### Instal·lar gdc-client (Linux/Windows/macOS)
+Aquest repositori inclou un script que:
+- detecta el sistema operatiu,
+- descarrega el binari oficial corresponent,
+- verifica el **MD5** publicat pel GDC,
+- i el descomprimeix a `tools/gdc-client/<versió>/<plataforma>/`.
+
+Comanda (NO descarrega res si no poses `--install`):
+```bash
+python scripts/setup_gdc_client.py
+
+Instal·lació real:
+```bash
+python scripts/setup_gdc_client.py --install
+
+> Nota: Els binaris dins tools/gdc-client/ no es versionen (estan al .gitignore).
+
+### Descàrrega de dades amb manifest
+
+El manifest de descàrrega del GDC és:
+
+data/metadata/gdc_manifest.2026-03-09.191818.txt
+
+Un cop tens gdc-client instal·lat, la descàrrega (quan toqui) es fa amb:
+
+tools/gdc-client/2.3.0/linux_x64/gdc-client download -m data/metadata/gdc_manifest.2026-03-09.191818.txt -d data/raw/gdc
+
+(A Windows i macOS, canvia la ruta segons la plataforma que hagi instal·lat el script.)
