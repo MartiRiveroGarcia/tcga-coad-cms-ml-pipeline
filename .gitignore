@@ -23,3 +23,6 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# GDC Data Transfer Tool binaries (do not commit)
+tools/gdc-client/
