@@ -1,0 +1,23 @@
+name: tcga-coad-cms-ml-pipeline
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  # Data manipulation
+  - numpy
+  - pandas
+  # ML
+  - scikit-learn
+  # Visualization
+  - matplotlib
+  - seaborn
+  # Notebooks
+  - jupyterlab
+  # Documentation
+  - mkdocs
+  - mkdocs-material
+  # Pip packages
+  - pip
+  - pip:
+      - -e .
