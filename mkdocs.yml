@@ -3,6 +3,9 @@ theme:
   name: material
 nav:
   - Inici: index.md
-  - KPIs: KPI_CHECKLIST.md
+  - Projecte: project.md
   - Pipeline: pipeline.md
-  - Reproductibilitat: reproductibility.md
+  - Dades: data.md
+  - Reproductibilitat: reproducibility.md
+  - Requisits: requirements.md
+  - KPIs: KPI_CHECKLIST.md

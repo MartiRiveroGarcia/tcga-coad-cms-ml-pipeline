@@ -1,30 +1,124 @@
 # Pipeline
 
-## 1. Objectiu del pipeline
-Aquest projecte defineix i documenta un **flux de treball reproduïble** per a la classificació dels subtipus CMS del càncer colorectal a partir de **matrius d’expressió RNA-seq ja processades**, amb l’objectiu de poder executar i comparar models sota condicions homogènies i transparents. :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
+## Visió general
 
-## 2. Dades d’entrada (què entra al pipeline)
-### 2.1 Font
-Les dades s’obtenen del **GDC Data Portal** (TCGA), i s’utilitza la cohort **TCGA-COAD**. :contentReference[oaicite:2]{index=2} :contentReference[oaicite:3]{index=3}
+El pipeline transforma dades d'expressió gènica en una comparativa de models de classificació.
+Cada etapa és un script independent que es pot executar per separat.
 
-### 2.2 Tipus de dades i format esperat
-Per al pipeline és imprescindible treballar amb:
-- **Matriu d’expressió gènica** (valors numèrics homogènics).
-- **Metadades** per filtrar i seleccionar mostres. :contentReference[oaicite:4]{index=4}
+```
+Dades RNA-seq (TCGA-COAD)
+        │
+        ▼
+   DESCÀRREGA ────────── scripts/download.py
+   Descarrega fitxers       src/gdc_utils.py
+   del GDC Portal
+        │
+        ▼
+   PREPROCESSAMENT ───── scripts/preprocess.py
+   Filtra gens sorollosos,   src/preprocessing.py
+   normalitza, split
+   train/test
+        │
+        ▼
+   ENTRENAMENT ────────── scripts/train.py
+   Entrena 3 models            src/models.py
+   amb les mateixes dades
+   i la mateixa seed
+        │
+        ▼
+   AVALUACIÓ ──────────── scripts/evaluate.py
+   Mètriques, gràfics,        src/evaluation.py
+   taula comparativa
+```
 
-No es treballa amb dades crues **FASTQ**, perquè això implicaria fases fora d’abast (QC, alineament, quantificació, etc.). :contentReference[oaicite:5]{index=5} :contentReference[oaicite:6]{index=6}
+## Etapa 1: Descàrrega de dades
 
-### 2.3 Criteris de selecció (per garantir homogeneïtat i reproductibilitat)
-Per assegurar un conjunt de dades homogeni i reproduïble, s’apliquen aquests criteris:
-- Cohort: **TCGA-COAD**
-- Dades transcriptòmiques: **RNA-seq**
-- Fitxers quantificats amb **STAR-Counts** (comptatges a nivell de gen)
-- Només dades **d’accés obert**
-- Mostres de **teixit tumoral** per minimitzar variabilitat biològica :contentReference[oaicite:7]{index=7}
+**Script:** `scripts/download.py`
+**Mòdul:** `src/gdc_utils.py`
 
-## 3. Sortida d’aquesta fase (què ha de quedar generat)
-Al final de la fase “dades”, el projecte ha de conservar:
-- Un **manifest** i **metadades** suficients per reconstruir la descàrrega i el dataset (traçabilitat). :contentReference[oaicite:8]{index=8}
-- La matriu d’expressió (format tabular) ja llesta per entrar al preprocessament.
+Descarrega les dades RNA-seq del GDC Data Portal usant el manifest que hi ha a `data/metadata/`.
+Si l'eina `gdc-client` no està instal·lada, la descarrega i instal·la automàticament.
 
-> Nota de qualitat: per evitar biaixos i “leakage”, les transformacions s’han d’ajustar al conjunt d’entrenament i aplicar-se al conjunt de prova amb els paràmetres obtinguts. :contentReference[oaicite:9]{index=9}
+**Entrada:** manifest GDC (`data/metadata/gdc_manifest*.txt`)
+**Sortida:** fitxers RNA-seq a `data/raw/gdc/`
+
+Veure [Dades](data.md) per a més detalls sobre el dataset i els criteris de selecció.
+
+## Etapa 2: Preprocessament
+
+**Script:** `scripts/preprocess.py`
+**Mòdul:** `src/preprocessing.py`
+
+Transforma les dades brutes en un dataset net i llest per entrenar models:
+
+1. **Càrrega** — llegeix tots els fitxers de comptatge i els unifica en una matriu (gens × mostres)
+2. **Filtratge de gens** — elimina gens amb poca variabilitat o expressió molt baixa (soroll)
+3. **Normalització** — ajusta els valors perquè siguin comparables entre mostres
+4. **Split train/test** — separa les dades en conjunt d'entrenament i de prova **abans** de cap transformació que pugui generar data leakage
+
+**Entrada:** fitxers RNA-seq a `data/raw/gdc/`
+**Sortida:** matriu neta a `data/processed/`
+
+> **Data leakage**: si normalitzes amb informació del conjunt de test, el model "veu"
+> dades que no hauria de veure. Per evitar-ho, les transformacions s'ajusten (fit)
+> al train i s'apliquen (transform) al test amb els paràmetres del train.
+
+## Etapa 3: Entrenament
+
+**Script:** `scripts/train.py`
+**Mòdul:** `src/models.py`
+
+Entrena 3 models de classificació amb les mateixes dades d'entrenament i la mateixa seed:
+
+| Model | Tipus | Per què? |
+|-------|-------|----------|
+| Logistic Regression | Lineal | Baseline simple i interpretable |
+| Random Forest | Ensemble (arbres) | Robust, bon rendiment general |
+| SVM | Kernel | Bon rendiment en espais d'alta dimensió |
+
+Cada model rep la mateixa matriu d'entrenament i la mateixa partició.
+Això garanteix que la comparativa sigui justa.
+
+**Entrada:** dades processades de `data/processed/`
+**Sortida:** models entrenats (en memòria, passats a l'etapa d'avaluació)
+
+> **Nota:** els models entrenats NO es guarden al repositori. Qualsevol persona
+> pot regenerar-los executant el pipeline amb la mateixa seed.
+
+## Etapa 4: Avaluació
+
+**Script:** `scripts/evaluate.py`
+**Mòdul:** `src/evaluation.py`
+
+Mesura el rendiment de cada model amb dades que **mai ha vist** (test set) i genera
+visualitzacions comparatives:
+
+- **Mètriques per model:** accuracy, precision, recall, F1-score
+- **Confusion matrix:** taula que mostra encerts i errors per cada subtipus CMS
+- **Taula comparativa (benchmark):** els 3 models costat a costat
+
+**Entrada:** models entrenats + dades de test de `data/processed/`
+**Sortida:** mètriques i gràfics
+
+## Dades d'entrada
+
+### Què és RNA-seq?
+
+RNA-seq mesura quant s'expressa cada gen en una mostra de teixit. El resultat és una taula on:
+- Cada **fila** és un gen (~60.000 gens)
+- Cada **columna** és una mostra (un pacient)
+- Cada **valor** és un comptatge (quantes vegades s'ha detectat aquell gen)
+
+### Què són els subtipus CMS?
+
+El càncer colorectal es classifica en 4 subtipus moleculars (Consensus Molecular Subtypes):
+
+| Subtipus | Nom | Característiques principals |
+|----------|-----|----------------------------|
+| CMS1 | MSI Immune | Hipermutació, activació immune |
+| CMS2 | Canonical | Activació WNT i MYC |
+| CMS3 | Metabolic | Desregulació metabòlica |
+| CMS4 | Mesenchymal | Activació TGF-β, pitjor pronòstic |
+
+L'objectiu del pipeline és entrenar models que, donada l'expressió gènica d'una mostra,
+prediguin a quin subtipus CMS pertany.

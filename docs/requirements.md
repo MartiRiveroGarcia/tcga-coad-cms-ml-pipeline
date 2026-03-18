@@ -18,5 +18,5 @@ Veure la llista completa i marcable a: [KPI checklist](KPI_CHECKLIST.md)
 Checks mínims:
 - CA1. Es pot crear l’entorn des de `environment.yml` i fer imports bàsics.
 - CA2. La documentació es construeix amb MkDocs i es publica a GitHub Pages.
-- CA3. Existeix un manifest de dades versionat a `data/manifests/`.
+- CA3. Existeix un manifest de dades versionat a `data/metadata/`.
 - CA4. Existeix una estructura de resultats per “runs” (quan s’implementi el pipeline).

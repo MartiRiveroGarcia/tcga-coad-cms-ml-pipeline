@@ -1,88 +1,100 @@
-# Dades i manifest
+# Dades
 
-Aquest projecte NO puja dades grans al repositori. El que versionem és la **traçabilitat**:
-- criteris de selecció
-- consulta (o descripció) per reconstruir la descàrrega
-- estructura/format dels fitxers d’entrada
+## Què són les dades d'aquest projecte?
 
-## Què guardem a `data/metadata/`
-1) `dataset_manifest.json`
-   - Cohort (ex: TCGA-COAD)
-   - Tipus de dades (RNA-seq)
-   - Workflow/format (ex: STAR-Counts)
-   - Accés (open)
-   - Tipus de mostra (tumoral, etc.)
-   - Data de creació i notes
+Aquest projecte treballa amb dades d'**expressió gènica** (RNA-seq) de pacients amb càncer colorectal,
+obtingudes del projecte públic [TCGA-COAD](https://portal.gdc.cancer.gov/) (The Cancer Genome Atlas — Colon Adenocarcinoma).
 
-2) `samples.tsv` (opcional però recomanat)
-   - Taula amb les mostres/fitxers seleccionats (IDs, nom fitxer, etc.)
-   - Serveix per reconstruir exactament el dataset i auditar canvis
+En termes simples: cada fitxer conté una llista de **gens** i quant s'expressa cadascun en una mostra de teixit tumoral.
+Aquestes dades serveixen per entrenar models que classifiquin les mostres en **subtipus moleculars (CMS)**.
 
-> Objectiu: que qualsevol persona pugui reconstruir el mateix dataset només amb aquests fitxers.
+## D'on venen?
 
-## Carpetes de dades i política de git
+Les dades provenen del **GDC Data Portal** (Genomic Data Commons), el repositori oficial del NIH
+per a dades genòmiques de càncer. No treballem amb dades crues (FASTQ) sinó amb
+**comptatges ja quantificats** (STAR-Counts), que són taules numèriques llestes per analitzar.
 
-| Carpeta | Contingut | Versionat? |
-|---------|-----------|------------|
-| `data/raw/` | Fitxers descarregats (RNA-seq counts, etc.) | **No** — gitignored |
-| `data/processed/` | Sortides de preprocessament | **No** — gitignored |
-| `data/metadata/` | Metadades | **Sí** |
+### Criteris de selecció
 
-- Les carpetes `data/raw/` i `data/processed/` estan al `.gitignore`.
+| Criteri | Valor |
+|---------|-------|
+| Cohort | TCGA-COAD |
+| Tipus de dada | RNA-seq (transcriptòmica) |
+| Workflow | STAR-Counts (comptatges a nivell de gen) |
+| Accés | Obert (open access) |
+| Tipus de mostra | Teixit tumoral (Primary Tumor) |
 
-## Fitxers de traçabilitat (export GDC)
+Aquests criteris garanteixen un dataset **homogeni i reproduïble**.
 
-Aquesta carpeta conté fitxers **petits** (manifest i metadades) que permeten reproduir la selecció i la descàrrega sense pujar dades grans al repositori.
+## Què guardem al repositori?
 
-### Ubicació
-- `data/metadata/` (versionat)
-- `data/raw/` (NO versionat; només descàrregues)
+El repositori **NO conté les dades grans** (fitxers RNA-seq). Només guardem fitxers petits
+que permeten **reconstruir exactament el mateix dataset**:
 
-### Fitxers
+| Carpeta | Contingut | Al repositori? |
+|---------|-----------|----------------|
+| `data/metadata/` | Manifests i metadades | Sí |
+| `data/raw/` | Fitxers RNA-seq descarregats | No (.gitignore) |
+| `data/processed/` | Dades netes i normalitzades | No (.gitignore) |
 
-**1) `gdc_manifest.<data>.txt`**
-- Manifest oficial del GDC per descarregar fitxers amb el Data Transfer Tool.
-- Conté els identificadors dels fitxers (`id`) i informació per validar la descàrrega (`md5`, `size`, `state`).
-- És l’entrada principal del pas de descàrrega (futur): `gdc-client download -m <manifest>`.
+### Fitxers de metadades
 
-**2) `metadata.repository.<data>.json`**
-- JSON amb metadades completes dels fitxers del dataset (nom, mida, md5, tipus de dada).
-- Inclou informació del workflow d’anàlisi (p. ex. `STAR - Counts`) i permet justificar/reproduir el dataset seleccionat.
-- Pot referenciar fitxers d’entrada (p. ex. BAM) que poden ser d’accés controlat: el projecte treballa amb els fitxers de sortida oberts (counts) i NO descarrega els inputs controlats.
+**`gdc_manifest.<data>.txt`**
+Manifest oficial del GDC. Conté els identificadors únics de cada fitxer, el seu MD5 i mida.
+És l'entrada principal per a la descàrrega automatitzada.
 
-**3) `gdc_sample_sheet.<data>.tsv`**
-- Taula “humana” exportada del GDC per fer mapeig entre fitxers i casos/mostres.
-- La capçalera exacta es pot veure amb: `head -n 1 data/metadata/gdc_sample_sheet.<data>.tsv`.
+**`metadata.repository.<data>.json`** (si existeix)
+JSON amb metadades completes dels fitxers (nom, workflow, tipus de dada).
+Permet justificar i auditar el dataset seleccionat.
 
-## Instal·lació de l’eina de descàrrega (GDC Data Transfer Tool)
+**`gdc_sample_sheet.<data>.tsv`** (si existeix)
+Taula que mapeja fitxers a casos/mostres del TCGA. Útil per associar
+cada fitxer d'expressió amb el seu pacient i mostra d'origen.
 
-Per descarregar fitxers del GDC a partir d’un manifest, el projecte utilitza el **GDC Data Transfer Tool (gdc-client)**, instal·lat des de binaris oficials (cross-platform). ([GDC Data Transfer Tool](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool))
+## Com es descarreguen les dades?
 
-### Instal·lar gdc-client (Linux/Windows/macOS)
-Aquest repositori inclou un script que:
-- detecta el sistema operatiu,
-- descarrega el binari oficial corresponent,
-- verifica el **MD5** publicat pel GDC,
-- i el descomprimeix a `tools/gdc-client/<versió>/<plataforma>/`.
+La descàrrega és completament automatitzada amb una sola comanda:
 
-Comanda (NO descarrega res si no poses `--install`):
 ```bash
-python scripts/setup_gdc_client.py
+python scripts/download.py
+```
 
-Instal·lació real:
+### Què fa aquest script?
+
+1. **Busca el manifest** — detecta automàticament el fitxer `gdc_manifest*.txt` més recent a `data/metadata/`
+2. **Instal·la gdc-client si cal** — el [GDC Data Transfer Tool](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool) és l'eina oficial per descarregar dades del GDC. Si no la tens instal·lada, el script la descarrega, en verifica el MD5, i l'extreu a `tools/gdc-client/`
+3. **Descarrega els fitxers** — usa gdc-client amb el manifest per baixar tots els fitxers a `data/raw/gdc/`
+
+### Opcions disponibles
+
 ```bash
-python scripts/setup_gdc_client.py --install
+# Veure què faria sense descarregar res
+python scripts/download.py --dry-run
 
-> Nota: Els binaris dins tools/gdc-client/ no es versionen (estan al .gitignore).
+# Usar un manifest concret
+python scripts/download.py --manifest data/metadata/gdc_manifest.2026-03-09.191818.txt
 
-### Descàrrega de dades amb manifest
+# Canviar el directori de sortida
+python scripts/download.py --out data/raw/custom_dir
+```
 
-El manifest de descàrrega del GDC és:
+### Estructura interna
 
-data/metadata/gdc_manifest.2026-03-09.191818.txt
+El script `scripts/download.py` és un punt d'entrada lleuger. Tota la lògica reutilitzable
+(detecció de plataforma, instal·lació, cerca de l'executable) viu a `src/gdc_utils.py`.
 
-Un cop tens gdc-client instal·lat, la descàrrega (quan toqui) es fa amb:
+```
+scripts/download.py          ← punt d'entrada (parseig d'arguments, orquestració)
+    ↓ importa
+src/gdc_utils.py             ← lògica compartida (instal·lació, detecció, cerca)
+    ↓ usa
+tools/gdc-client/            ← binari descarregat (.gitignore)
+    ↓ descarrega
+data/raw/gdc/                ← fitxers RNA-seq (.gitignore)
+```
 
-tools/gdc-client/2.3.0/linux_x64/gdc-client download -m data/metadata/gdc_manifest.2026-03-09.191818.txt -d data/raw/gdc
+## Principi de reproductibilitat
 
-(A Windows i macOS, canvia la ruta segons la plataforma que hagi instal·lat el script.)
+Qualsevol persona que cloni el repositori pot obtenir exactament les mateixes dades executant
+`python scripts/download.py`. El manifest és determinista: conté els IDs exactes dels fitxers
+i els seus checksums per verificar la integritat.
