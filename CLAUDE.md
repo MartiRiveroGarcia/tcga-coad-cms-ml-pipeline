@@ -59,4 +59,5 @@ TFG de bioinformàtica — l'objectiu és benchmark de models amb reproducibilit
 - Claude NO fa commits, push ni cap operació git directament.
 - Quan calgui fer commit, Claude indica les comandes exactes a executar.
 - Commits freqüents i atòmics (cada pocs canvis).
+- Quan s'hagi de fer un commit, demanar primer git status i en base a la sortida de la comanda fer el commit.
 - Branques: `main` (principal), `feat/etapa{N}-*` (per etapa del TFG).
