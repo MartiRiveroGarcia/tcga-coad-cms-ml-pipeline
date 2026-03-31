@@ -93,6 +93,47 @@ tools/gdc-client/            ← binari descarregat (.gitignore)
 data/raw/gdc/                ← fitxers RNA-seq (.gitignore)
 ```
 
+## Etiquetes CMS (Consensus Molecular Subtypes)
+
+Per entrenar models de classificació, necessitem saber a quin subtipus CMS pertany cada mostra.
+Aquestes etiquetes provenen de l'estudi de referència del consorci CMS:
+
+> Guinney et al. (2015). *The consensus molecular subtypes of colorectal cancer.* Nature Medicine.
+
+### D'on s'obtenen?
+
+Les etiquetes es van publicar al repositori [Synapse](https://www.synapse.org/) amb identificador
+`syn2623706`. El fitxer concret és `cms_labels_public_all.txt` (syn4978511), que conté les
+classificacions per a 3.104 mostres de múltiples datasets de càncer colorectal.
+
+Com que el fitxer és petit (116 KB) i de dades públiques, es guarda directament al repositori
+a `data/metadata/cms_labels_public_all.txt` — no cal descarregar-lo programàticament.
+
+### Què conté?
+
+El fitxer és un TSV amb una fila per mostra:
+
+| Columna | Descripció |
+|---------|-----------|
+| `sample` | Identificador del pacient (e.g. `TCGA-A6-6653`) |
+| `dataset` | Dataset d'origen (`tcga`, `gse33113`, etc.) |
+| `CMS_network` | Classificació per xarxa |
+| `CMS_RFclassifier` | Classificació per Random Forest |
+| `CMS_final_network_plus_RFclassifier_in_nonconsensus_samples` | **Etiqueta consens final** |
+
+El pipeline utilitza l'última columna (consens final) i filtra per `dataset == "tcga"`.
+
+### Xifres
+
+Del fitxer original:
+
+- 573 mostres TCGA (inclou COAD + READ)
+- 459 amb etiqueta útil (CMS1: 76, CMS2: 220, CMS3: 72, CMS4: 144)
+- 114 sense etiqueta (61 NOLBL + 53 UNK) → descartades
+
+Després de creuar amb les nostres 458 mostres TCGA-COAD (veure [Pipeline — Etapa 2](pipeline.md#etapa-2-preprocessament)):
+**370 mostres** amb etiqueta CMS vàlida.
+
 ## Principi de reproductibilitat
 
 Qualsevol persona que cloni el repositori pot obtenir exactament les mateixes dades executant
