@@ -92,31 +92,63 @@ Aquesta divisió és fonamental per evitar **data leakage** (veure nota més ava
 Aquests passos **no generen data leakage** perquè les decisions es basen en
 metadades o anotacions externes, no en la distribució dels valors d'expressió.
 
-**Pas 1 — Construir matriu d'expressió.** Llegeix cada fitxer TSV dins de
-`data/raw/gdc/<UUID>/`, n'extreu la columna `unstranded` (comptatges raw),
-i els combina en una matriu única on cada fila és un gen i cada columna és un fitxer.
+**Pas 1 — Construir matriu d'expressió (60.664 gens × 483 fitxers).** Cada fitxer STAR-Counts
+conté 9 columnes. Nosaltres n'extraiem només una: `unstranded` (comptatges raw sense
+distinció de cadena). Per què aquesta i no `tpm_unstranded` o `fpkm_unstranded`?
 
-**Pas 2 — Eliminar files QC.** Els fitxers STAR-Counts inclouen 4 files de control
-de qualitat (`N_unmapped`, `N_multimapping`, `N_noFeature`, `N_ambiguous`) que
-no són gens reals sinó estadístiques de l'alineament. S'eliminen.
+- **TPM/FPKM** ja estan normalitzats per longitud de gen i profunditat de seqüenciació.
+  Això sembla convenient, però impedeix aplicar les nostres pròpies transformacions
+  (filtratge per comptatge mínim, log2) de manera correcta.
+- **Comptatges raw** permeten controlar tot el procés de normalització, que és el que
+  volem en un pipeline reproduïble.
 
-**Pas 3 — Filtrar gens protein-coding.** De ~60.660 gens, només es retenen els
-~19.962 de tipus `protein_coding` segons l'anotació GENCODE v36.
-Gens no codificants (lncRNA, pseudogens, etc.) s'eliminen perquè introdueixen
-soroll sense aportar informació rellevant per a la classificació CMS.
+El pipeline llegeix cada fitxer TSV dins de `data/raw/gdc/<UUID>/`, n'extreu la columna
+`unstranded`, i els combina en una matriu única on cada fila és un gen i cada columna
+és un fitxer.
 
-**Pas 4 — Deduplicar mostres.** El dataset conté 483 fitxers però només 458 pacients
-únics. Les duplicitats provenen de:
+**Pas 2 — Eliminar 4 files QC.** Les primeres 4 files de cada fitxer STAR-Counts
+no són gens reals, sinó estadístiques de l'alineament:
 
-| Tipus | Quantes | Criteri d'eliminació |
-|-------|---------|---------------------|
-| Mostres FFPE | 13 | Perfil d'expressió alterat pel fixat en formalina |
-| Mostres no primàries (metàstasi, recurrència) | 2 | Només treballem amb tumor primari |
-| Fitxers duplicats per pacient | 10 | Es reté el fitxer amb més profunditat de seqüenciació |
+| Fila | Significat |
+|------|-----------|
+| `N_unmapped` | Lectures que no s'han pogut alinear al genoma |
+| `N_multimapping` | Lectures que mapegen a múltiples ubicacions |
+| `N_noFeature` | Lectures alineades però que no cauen dins de cap gen |
+| `N_ambiguous` | Lectures que cauen en zones on es solapen gens |
 
-**Pas 5 — Unir amb etiquetes CMS.** Es fa un inner join entre la matriu i les etiquetes
-CMS de Guinney et al. 2015 (veure [Dades — Etiquetes CMS](data.md#etiquetes-cms-consensus-molecular-subtypes)).
-Les mostres sense etiqueta es descarten. Resultat: **370 mostres**.
+Si les deixéssim, els algorismes de ML les tractarien com a gens reals. S'eliminen.
+
+**Pas 3 — Filtrar gens protein-coding (60.660 → 19.962 gens, eliminats 40.698).**
+L'anotació GENCODE v36 classifica cada gen per tipus. D'un total de ~60.660 gens,
+només ~19.962 són de tipus `protein_coding` — la resta inclou:
+
+- **lncRNA** (~16.000) — RNA llarg no codificant
+- **Pseudogens** (~15.000) — còpies de gens que ja no es tradueixen
+- **Altres** (~9.000) — miRNA, rRNA, snRNA, etc.
+
+Per què els eliminem? La classificació CMS es basa en signatures d'expressió de
+**proteïnes**. Els gens no codificants introdueixen dimensions addicionals (soroll)
+sense aportar senyal discriminatiu, i augmenten el risc de sobreajustament.
+
+**Pas 4 — Deduplicar mostres (483 → 458 mostres, eliminades 25).**
+El dataset conté 483 fitxers però només 458 pacients únics. Els 25 fitxers sobrants
+s'eliminen en tres passos:
+
+| Tipus | Eliminades | Per què? |
+|-------|-----------|---------|
+| Mostres FFPE | 13 | La fixació en formalina (FFPE) altera el perfil d'expressió — les lectures RNA-seq d'FFPE tenen més degradació i biaixos que les de teixit congelat. Barrejar-les introduiria variabilitat tècnica, no biològica |
+| Mostres no primàries | 2 | Una mostra metastàtica (06A) i una de recurrència (02A). El nostre objectiu és classificar tumors primaris (01A); metàstasis i recurrències tenen perfils d'expressió diferents |
+| Duplicats per pacient | 10 | 10 pacients (sèrie A6-*) tenen 2 fitxers vàlids cadascun. Per a cada duplicat, es reté el fitxer amb **major profunditat de seqüenciació** (suma total de comptatges), perquè conté més informació |
+
+Després d'aquest pas, tenim exactament **1 fitxer per pacient** (458 mostres).
+
+**Pas 5 — Unir amb etiquetes CMS (458 → 370 mostres, descartades 88).**
+Es fa un inner join entre la matriu i les etiquetes CMS de Guinney et al. 2015
+(veure [Dades — Etiquetes CMS](data.md#etiquetes-cms-consensus-molecular-subtypes)).
+
+No tots els pacients TCGA-COAD tenen etiqueta CMS — 88 no van ser inclosos a l'estudi
+del consorci o van rebre etiqueta `NOLBL`/`UNK` (no classificable). Sense etiqueta,
+no podem usar-los per a aprenentatge supervisat. Resultat: **370 mostres**.
 
 Distribució:
 
@@ -131,9 +163,19 @@ Distribució:
 
 Dividim les 370 mostres en **296 entrenament** i **74 test** (80/20).
 El split és **estratificat**: les proporcions de CMS1-4 es mantenen en ambdós conjunts.
+Això és important perquè CMS3 (54 mostres) és minoritària — un split aleatori podria
+deixar molt poques mostres de CMS3 al test.
+
+| Subtipus | Train | Test | Total |
+|----------|-------|------|-------|
+| CMS1 | 57 | 14 | 71 |
+| CMS2 | 116 | 29 | 145 |
+| CMS3 | 43 | 11 | 54 |
+| CMS4 | 80 | 20 | 100 |
+| **Total** | **296** | **74** | **370** |
 
 La **seed=42** fixa l'aleatorietat. Executar el pipeline dos cops amb la mateixa seed
-produeix exactament la mateixa partició.
+produeix exactament la mateixa partició — requisit fonamental per a la reproducibilitat.
 
 ### Bloc 2: Transformacions (després del split)
 
@@ -145,14 +187,33 @@ idènticament al de test.
 > el model "veu" indirectament dades que no hauria de veure durant l'entrenament.
 > Això produeix mètriques massa optimistes que no reflecteixen el rendiment real.
 
-**Pas 7 — Filtrar gens amb baix comptatge.** Un gen es reté si almenys el 20% de
-les mostres d'entrenament tenen un comptatge ≥ 10. Si un gen gairebé no s'expressa,
-no aporta senyal útil per discriminar subtipus. Resultat: 19.962 → **15.625 gens**.
+**Pas 7 — Filtrar gens amb baix comptatge (19.962 → 15.625 gens, eliminats 4.337).**
+Un gen es reté si almenys el **20% de les mostres d'entrenament** (≥ 60 de 296) tenen
+un comptatge **≥ 10**. Un gen que s'expressa en poques mostres o amb comptatges molt
+baixos és probablement soroll tècnic. Mantenir-lo afegeix dimensions inútils que
+dificulten l'aprenentatge.
 
-**Pas 8 — Transformació log2(x + 1).** Aplica `log2(x + 1)` a tots els comptatges.
-Això comprimeix el rang de valors (de 0–1.700.000 a 0–20.7) i redueix l'efecte
-dels gens molt expressats, fent les dades més adequades per als algorismes de ML.
-El `+1` evita `log(0) = -infinit`.
+**Important:** el criteri es calcula **només sobre train**. Després, els mateixos 15.625
+gens es retenen a test. Si calculéssim el filtre sobre totes les dades, estaríem
+usant informació del test per decidir quins gens conservar → data leakage.
+
+**Pas 8 — Transformació log2(x + 1). Rang resultant: [0.00, 20.71].**
+Les dades raw d'RNA-seq tenen una distribució molt esbiaixada: la majoria de gens
+tenen comptatges baixos (0–100) però alguns arriben a milions. La transformació
+`log2(x + 1)` comprimeix el rang:
+
+| Valor original | Valor log2 |
+|---------------|-----------|
+| 0 | 0.00 |
+| 10 | 3.46 |
+| 1.000 | 9.97 |
+| 100.000 | 16.61 |
+| 1.700.000 | 20.71 |
+
+El `+1` evita `log2(0) = -infinit`. Aquesta transformació és **stateless** (no té
+paràmetres que es calculin sobre les dades), però s'aplica després del split per
+convenció — si en el futur s'afegís una normalització z-score, la mitjana i
+desviació s'haurien de calcular sobre train i aplicar a test.
 
 ### Sortida de l'etapa 2
 
