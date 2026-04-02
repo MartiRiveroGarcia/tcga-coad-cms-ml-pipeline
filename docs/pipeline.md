@@ -20,6 +20,12 @@ Dades RNA-seq (TCGA-COAD)
    train/test
         │
         ▼
+   EXPLORACIÓ ─────────── notebooks/data_exploration.ipynb
+   PCA + UMAP per             src/dimensionality_reduction.py
+   verificar dades i
+   avaluar separabilitat
+        │
+        ▼
    ENTRENAMENT ────────── scripts/train.py
    Entrena 3 models            src/models.py
    amb les mateixes dades
@@ -238,7 +244,25 @@ python scripts/preprocess.py --dry-run
 python scripts/preprocess.py --seed 123 --test-size 0.3
 ```
 
-## Etapa 3: Entrenament
+## Etapa 3: Exploració de dades
+
+**Notebook:** `notebooks/data_exploration.ipynb`
+**Mòdul:** `src/dimensionality_reduction.py`
+
+Abans d'entrenar cap model, cal verificar que les dades preprocessades són correctes
+i que els subtipus CMS es poden separar. Aquesta etapa és purament d'**anàlisi**:
+no modifica les dades ni genera fitxers nous a `data/processed/`.
+
+**Entrada:** dades processades de `data/processed/`
+**Sortida:** gràfics a `figures/` (per a la memòria del TFG)
+
+Les tècniques usades i les conclusions obtingudes estan documentades a [Exploració](exploration.md).
+
+> **Nota:** PCA i UMAP s'usen aquí exclusivament per **visualitzar** les dades.
+> Els models d'entrenament (etapa 4) reben les 15.625 dimensions originals,
+> no les components reduïdes.
+
+## Etapa 4: Entrenament
 
 **Script:** `scripts/train.py`
 **Mòdul:** `src/models.py`
@@ -260,7 +284,7 @@ Això garanteix que la comparativa sigui justa.
 > **Nota:** els models entrenats NO es guarden al repositori. Qualsevol persona
 > pot regenerar-los executant el pipeline amb la mateixa seed.
 
-## Etapa 4: Avaluació
+## Etapa 5: Avaluació
 
 **Script:** `scripts/evaluate.py`
 **Mòdul:** `src/evaluation.py`

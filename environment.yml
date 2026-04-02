@@ -12,6 +12,8 @@ dependencies:
   # Visualization
   - matplotlib
   - seaborn
+  # Dimensionality reduction
+  - umap-learn
   # Notebooks
   - jupyterlab
   # Documentation
