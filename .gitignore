@@ -4,6 +4,7 @@ site/
 # Data — only manifests are tracked
 data/raw/
 data/processed/
+data/models/
 
 # Python
 __pycache__/
