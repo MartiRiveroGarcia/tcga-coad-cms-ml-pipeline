@@ -7,6 +7,7 @@ nav:
   - Pipeline: pipeline.md
   - Dades: data.md
   - Exploració: exploration.md
+  - Entrenament: training.md
   - Reproductibilitat: reproducibility.md
   - Requisits: requirements.md
   - KPIs: KPI_CHECKLIST.md

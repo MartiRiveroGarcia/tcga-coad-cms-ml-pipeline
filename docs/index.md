@@ -9,6 +9,7 @@ a partir de dades RNA-seq del projecte TCGA-COAD.
 - **[Pipeline](pipeline.md)** — descripció de cada etapa del flux de treball
 - **[Dades](data.md)** — d'on venen les dades, com es descarreguen, què guardem al repo
 - **[Exploració](exploration.md)** — reducció de dimensionalitat i anàlisi exploratori (PCA, UMAP)
+- **[Entrenament](training.md)** — entrenament de Logistic Regression, Random Forest i SVM
 - **[Reproductibilitat](reproducibility.md)** — com reproduir els resultats pas a pas
 - **[Requisits](requirements.md)** — requisits funcionals i criteris d'acceptació
 - **[KPIs](KPI_CHECKLIST.md)** — checklist mesurable de progrés

@@ -267,22 +267,23 @@ Les tècniques usades i les conclusions obtingudes estan documentades a [Explora
 **Script:** `scripts/train.py`
 **Mòdul:** `src/models.py`
 
-Entrena 3 models de classificació amb les mateixes dades d'entrenament i la mateixa seed:
+Entrena 3 models de classificació amb les mateixes dades d'entrenament i la mateixa seed,
+garantint una comparativa justa. Tots els models usen `class_weight='balanced'` per
+compensar el desbalanceig de classes (CMS3 = 15% del train).
 
 | Model | Tipus | Per què? |
 |-------|-------|----------|
-| Logistic Regression | Lineal | Baseline simple i interpretable |
-| Random Forest | Ensemble (arbres) | Robust, bon rendiment general |
-| SVM | Kernel | Bon rendiment en espais d'alta dimensió |
+| Logistic Regression | Lineal | Baseline interpretable; els coeficients indiquen quins gens discriminen |
+| Random Forest | Ensemble (arbres) | Robust en alta dimensió; feature importance per gen |
+| SVM | Kernel lineal | Excel·lent quan n_features >> n_samples (15.625 gens > 296 mostres) |
 
-Cada model rep la mateixa matriu d'entrenament i la mateixa partició.
-Això garanteix que la comparativa sigui justa.
+**Entrada:** dades processades de `data/processed/` (296 × 15.625)
+**Sortida:** `data/models/*.joblib` + `training_log.json` (no al repositori git)
 
-**Entrada:** dades processades de `data/processed/`
-**Sortida:** models entrenats (en memòria, passats a l'etapa d'avaluació)
+> **Nota:** els models NO es guarden al repositori — es poden regenerar en minuts
+> amb `python scripts/train.py`. El `training_log.json` documenta tots els hiperparàmetres.
 
-> **Nota:** els models entrenats NO es guarden al repositori. Qualsevol persona
-> pot regenerar-los executant el pipeline amb la mateixa seed.
+Veure [Entrenament](training.md) per a tots els detalls de disseny i hiperparàmetres.
 
 ## Etapa 5: Avaluació
 
