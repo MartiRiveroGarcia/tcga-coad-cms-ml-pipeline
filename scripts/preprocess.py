@@ -153,7 +153,7 @@ def main() -> None:
     )
 
     # Step 7: Filter low-count genes (fit on train, apply to both)
-    X_train, X_test, kept_genes = filter_low_count_genes(
+    X_train, X_test, kept_genes, gene_filter_stats = filter_low_count_genes(
         X_train, X_test,
         min_count=args.min_count,
         min_fraction=args.min_fraction,
@@ -184,7 +184,7 @@ def main() -> None:
 
     save_processed_data(
         output_dir, X_train, X_test, y_train, y_test,
-        gene_info, kept_genes, preprocessing_params,
+        gene_info, kept_genes, gene_filter_stats, preprocessing_params,
     )
 
     logger.info("=== Preprocessing complete ===")

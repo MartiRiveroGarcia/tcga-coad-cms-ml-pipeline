@@ -372,6 +372,13 @@ def filter_low_count_genes(
     X_train_filtered = X_train[kept_genes]
     X_test_filtered = X_test[kept_genes]
 
+    # Build per-gene stats for all genes (used by the exploration notebook)
+    expression_rate = genes_above_threshold / n_train
+    gene_filter_stats = pd.DataFrame({
+        "expression_rate": expression_rate,
+        "passed_filter": keep_mask,
+    })
+
     logger.info(
         "Low-count gene filter (count>=%d in >=%d%% of train): %d -> %d genes (removed %d)",
         min_count,
@@ -380,7 +387,7 @@ def filter_low_count_genes(
         len(kept_genes),
         before - len(kept_genes),
     )
-    return X_train_filtered, X_test_filtered, kept_genes
+    return X_train_filtered, X_test_filtered, kept_genes, gene_filter_stats
 
 
 # ── Step 8: Log transformation ──────────────────────────────────────────────
@@ -411,16 +418,18 @@ def save_processed_data(
     y_test: pd.Series,
     gene_info: pd.DataFrame,
     kept_genes: list[str],
+    gene_filter_stats: pd.DataFrame,
     params: dict[str, Any],
 ) -> None:
     """Save all processed data to CSV files and a JSON log.
 
     Output files:
-        X_train.csv  — samples as rows, genes as columns (log2-transformed)
-        X_test.csv   — same format
-        y_train.csv  — case_id, cms_label
-        y_test.csv   — case_id, cms_label
-        gene_names.csv — gene_id -> gene_name mapping for kept genes
+        X_train.csv          — samples as rows, genes as columns (log2-transformed)
+        X_test.csv           — same format
+        y_train.csv          — case_id, cms_label
+        y_test.csv           — case_id, cms_label
+        gene_names.csv       — gene_id -> gene_name mapping for kept genes
+        gene_filter_stats.csv — per-gene expression rate and filter decision
         preprocessing_log.json — full record of parameters and counts
     """
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -434,8 +443,11 @@ def save_processed_data(
     gene_names = gene_info[gene_info["gene_id"].isin(kept_genes)][["gene_id", "gene_name"]]
     gene_names.to_csv(output_dir / "gene_names.csv", index=False)
 
+    # Per-gene filter statistics (all protein-coding genes, for notebook exploration)
+    gene_filter_stats.to_csv(output_dir / "gene_filter_stats.csv")
+
     # Preprocessing log
     log_path = output_dir / "preprocessing_log.json"
     log_path.write_text(json.dumps(params, indent=2, ensure_ascii=False))
 
-    logger.info("Saved processed data to %s (%d files)", output_dir, 6)
+    logger.info("Saved processed data to %s (%d files)", output_dir, 7)
