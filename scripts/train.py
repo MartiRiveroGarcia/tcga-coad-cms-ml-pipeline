@@ -26,7 +26,6 @@ from src.gdc_utils import repo_root
 from src.models import (
     CLASS_WEIGHT,
     LR_MAX_ITER,
-    LR_MULTI_CLASS,
     LR_SOLVER,
     RANDOM_SEED,
     RF_MAX_FEATURES,
@@ -54,7 +53,6 @@ _TRAINERS = {
         train_logistic_regression,
         {
             "solver": LR_SOLVER,
-            "multi_class": LR_MULTI_CLASS,
             "max_iter": LR_MAX_ITER,
             "class_weight": CLASS_WEIGHT,
             "random_state": RANDOM_SEED,

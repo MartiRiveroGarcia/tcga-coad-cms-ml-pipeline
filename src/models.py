@@ -33,8 +33,7 @@ RANDOM_SEED: int = 42
 
 # LogisticRegression hyperparameters
 LR_MAX_ITER: int = 5000       # default 100 fails to converge on 15k features
-LR_SOLVER: str = "lbfgs"
-LR_MULTI_CLASS: str = "multinomial"
+LR_SOLVER: str = "lbfgs"      # multinomial by default for multi-class in sklearn >= 1.5
 
 # RandomForestClassifier hyperparameters
 RF_N_ESTIMATORS: int = 500
@@ -114,7 +113,6 @@ def train_logistic_regression(
     """
     model = LogisticRegression(
         solver=LR_SOLVER,
-        multi_class=LR_MULTI_CLASS,
         max_iter=LR_MAX_ITER,
         class_weight=CLASS_WEIGHT,
         random_state=RANDOM_SEED,
