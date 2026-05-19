@@ -10,6 +10,8 @@ a partir de dades RNA-seq del projecte TCGA-COAD.
 - **[Dades](data.md)** — d'on venen les dades, com es descarreguen, què guardem al repo
 - **[Exploració](exploration.md)** — reducció de dimensionalitat i anàlisi exploratori (PCA, UMAP)
 - **[Entrenament](training.md)** — entrenament de Logistic Regression, Random Forest i SVM
+- **[Avaluació](evaluation.md)** — mètriques, confusion matrices i benchmark comparatiu
 - **[Reproductibilitat](reproducibility.md)** — com reproduir els resultats pas a pas
+- **[Glossari](glossary.md)** — definicions de termes biològics, estadístics i d'aprenentatge automàtic
 - **[Requisits](requirements.md)** — requisits funcionals i criteris d'acceptació
 - **[KPIs](KPI_CHECKLIST.md)** — checklist mesurable de progrés
