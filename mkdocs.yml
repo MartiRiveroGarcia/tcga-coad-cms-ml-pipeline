@@ -1,6 +1,12 @@
 site_name: TCGA-COAD CMS ML Pipeline
 theme:
   name: material
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
   - Inici: index.md
   - Projecte: project.md
@@ -8,6 +14,8 @@ nav:
   - Dades: data.md
   - Exploració: exploration.md
   - Entrenament: training.md
+  - Avaluació: evaluation.md
   - Reproductibilitat: reproducibility.md
+  - Glossari: glossary.md
   - Requisits: requirements.md
   - KPIs: KPI_CHECKLIST.md

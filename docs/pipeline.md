@@ -293,12 +293,18 @@ Veure [Entrenament](training.md) per a tots els detalls de disseny i hiperparàm
 Mesura el rendiment de cada model amb dades que **mai ha vist** (test set) i genera
 visualitzacions comparatives:
 
-- **Mètriques per model:** accuracy, precision, recall, F1-score
+- **Mètriques per model:** accuracy, precision, recall, F1-score (macro i weighted)
 - **Confusion matrix:** taula que mostra encerts i errors per cada subtipus CMS
 - **Taula comparativa (benchmark):** els 3 models costat a costat
+- **F1 per classe:** mostra quins subtipus CMS son fàcils o difícils per a cada model
 
-**Entrada:** models entrenats + dades de test de `data/processed/`
-**Sortida:** mètriques i gràfics
+**Entrada:** models entrenats de `data/models/` + dades de test de `data/processed/`
+**Sortida:** `results/evaluation_report.json` + gràfics a `figures/`
+
+> **Nota:** `results/` no s'inclou al repositori git — es pot regenerar en segons
+> amb `python scripts/evaluate.py`. Les figures de `figures/` sí que es versionan.
+
+Veure [Avaluació](evaluation.md) per a tots els detalls de mètriques i interpretació.
 
 ## Dades d'entrada
 
@@ -322,3 +328,180 @@ El càncer colorectal es classifica en 4 subtipus moleculars (Consensus Molecula
 
 L'objectiu del pipeline és entrenar models que, donada l'expressió gènica d'una mostra,
 prediguin a quin subtipus CMS pertany.
+
+## Arquitectura C4
+
+El [model C4](https://c4model.com/) documenta l'arquitectura en 3 nivells de zoom progressiu:
+**Context** (el sistema i el seu entorn), **Contenidors** (les parts principals i el flux de dades) i
+**Components** (els mòduls interns de cada etapa).
+
+### Nivell 1 — Context
+
+> *Qui usa el sistema i amb quins sistemes externs interactua?*
+
+```mermaid
+C4Context
+  title Context del sistema — TCGA-COAD CMS ML Pipeline
+
+  Person(researcher, "Investigador / Bioinformàtic", "Executa el pipeline i interpreta els resultats de classificació CMS")
+
+  System(pipeline, "TCGA-COAD CMS ML Pipeline", "Pipeline reproduïble per classificar subtipus CMS de càncer colorectal a partir de dades RNA-seq")
+
+  System_Ext(gdc, "GDC Data Portal (NCI)", "Proveeix fitxers RNA-seq STAR-Counts de 483 pacients TCGA-COAD via gdc-client 2.3.0")
+  System_Ext(synapse, "Synapse (syn4978511)", "Proveeix etiquetes CMS consens de Guinney et al. 2015")
+  System_Ext(ghpages, "GitHub Pages", "Allotja la documentació pública generada per MkDocs via GitHub Actions CI/CD")
+
+  Rel(researcher, pipeline, "Executa les 4 etapes del pipeline")
+  Rel(gdc, pipeline, "483 fitxers STAR-Counts RNA-seq")
+  Rel(synapse, pipeline, "Etiquetes CMS consens")
+  Rel(pipeline, ghpages, "Documentació desplegada")
+```
+
+### Nivell 2 — Contenidors
+
+> *Quines parts principals té el sistema i com flueixen les dades entre elles?*
+
+```mermaid
+C4Container
+  title Contenidors — Etapes del pipeline i magatzems de dades
+
+  System_Ext(gdc, "GDC Data Portal (NCI)", "Font de dades RNA-seq")
+  System_Ext(synapse, "Synapse (syn4978511)", "Font d'etiquetes CMS consens")
+
+  Container_Boundary(b1, "TCGA-COAD CMS ML Pipeline") {
+    Container(stage_download, "Stage 1: Descàrrega", "Python / gdc-client", "Descarrega fitxers RNA-seq del GDC Portal")
+    Container(stage_preprocess, "Stage 2: Preprocessament", "Python / pandas, scikit-learn", "Construeix matriu, filtra gens, normalitza i fa el split train/test")
+    Container(stage_train, "Stage 3: Entrenament", "Python / scikit-learn", "Entrena 3 classificadors: LR, Random Forest i SVM amb seed=42")
+    Container(stage_evaluate, "Stage 4: Avaluació", "Python / matplotlib", "Avalua en test, genera mètriques i figures comparatives")
+
+    ContainerDb(metadata_db, "data/metadata/", "CSV / TSV / JSON", "Manifests GDC + etiquetes CMS (versionat al git)")
+    ContainerDb(raw_db, "data/raw/gdc/", "TSV", "483 fitxers STAR-Counts descarregats (no al git)")
+    ContainerDb(processed_db, "data/processed/", "CSV / JSON", "X_train, X_test, y_train, y_test, gene_names, logs")
+    ContainerDb(models_db, "data/models/", "joblib", "3 models entrenats (no al git)")
+    ContainerDb(results_db, "results/ + figures/", "JSON / PNG", "Informe d'avaluació + 5 visualitzacions")
+  }
+
+  Rel(gdc, stage_download, "STAR-Counts TSV via gdc-client")
+  Rel(synapse, metadata_db, "cms_labels_public_all.txt (descàrrega manual prèvia)")
+
+  Rel(metadata_db, stage_download, "gdc_manifest*.txt")
+  Rel(stage_download, raw_db, "483 fitxers TSV (~2 GB)")
+
+  Rel(raw_db, stage_preprocess, "matriu d'expressió raw")
+  Rel(metadata_db, stage_preprocess, "sample_sheet + cms_labels")
+  Rel(stage_preprocess, processed_db, "X/y train+test (296/74), gene_names, logs")
+
+  Rel(processed_db, stage_train, "X_train (296x15625), y_train")
+  Rel(stage_train, models_db, "3 fitxers .joblib + training_log.json")
+
+  Rel(models_db, stage_evaluate, "3 models entrenats")
+  Rel(processed_db, stage_evaluate, "X_test (74x15625), y_test")
+  Rel(stage_evaluate, results_db, "evaluation_report.json + 5 PNG")
+```
+
+### Nivell 3 — Components per etapa
+
+> *Quins mòduls interns usa cada script i com interactuen?*
+
+#### Stage 1: Descàrrega
+
+```mermaid
+C4Component
+  title Components — Stage 1: Descàrrega (scripts/download.py)
+
+  Person_Ext(researcher, "Investigador", "Executa l'script")
+  System_Ext(gdc, "GDC Data Portal (NCI)", "Font de dades RNA-seq")
+
+  ContainerDb_Ext(metadata_db, "data/metadata/", "TSV", "gdc_manifest*.txt")
+  ContainerDb(raw_db, "data/raw/gdc/", "TSV", "Fitxers STAR-Counts descarregats")
+
+  Container_Boundary(b1, "scripts/download.py") {
+    Component(download_script, "download.py", "Python script", "Punt d'entrada: llegeix el manifest i orquestra la descàrrega")
+    Component(gdc_utils, "src/gdc_utils.py", "Python module", "Detecció de plataforma, instal·lació i execució de gdc-client 2.3.0")
+  }
+
+  Rel(researcher, download_script, "executa")
+  Rel(download_script, metadata_db, "llegeix manifest (auto-detect newest)")
+  Rel(download_script, gdc_utils, "ensure_gdc_client, detect_platform_key")
+  Rel(gdc_utils, gdc, "descarrega gdc-client 2.3.0 si no existeix", "HTTPS")
+  Rel(gdc_utils, gdc, "executa gdc-client download", "API")
+  Rel(gdc, raw_db, "483 STAR-Counts TSV (~2 GB)")
+```
+
+#### Stage 2: Preprocessament
+
+```mermaid
+C4Component
+  title Components — Stage 2: Preprocessament (scripts/preprocess.py)
+
+  Person_Ext(researcher, "Investigador", "Executa l'script")
+
+  ContainerDb_Ext(raw_db, "data/raw/gdc/", "TSV", "483 fitxers STAR-Counts")
+  ContainerDb_Ext(metadata_db, "data/metadata/", "CSV / TSV", "sample_sheet + cms_labels")
+  ContainerDb(processed_db, "data/processed/", "CSV / JSON", "X/y train+test, gene_names, gene_filter_stats, logs")
+
+  Container_Boundary(b1, "scripts/preprocess.py") {
+    Component(preprocess_script, "preprocess.py", "Python script", "Punt d'entrada: orquestra els 9 passos del preprocessament")
+    Component(preprocessing, "src/preprocessing.py", "Python module", "Bloc 1: neteja segura (passos 1-5) — Split train/test (pas 6) — Bloc 2: transformacions data-dependent (passos 7-8) — Guardar (pas 9)")
+    Component(gdc_utils_pre, "src/gdc_utils.py", "Python module", "repo_root per localitzar fitxers del projecte")
+  }
+
+  Rel(researcher, preprocess_script, "executa")
+  Rel(preprocess_script, preprocessing, "build_matrix, remove_qc, filter_coding, dedup, attach_labels, split, filter_genes, log_transform, save")
+  Rel(preprocess_script, gdc_utils_pre, "repo_root")
+  Rel(preprocessing, raw_db, "llegeix 483 fitxers TSV")
+  Rel(preprocessing, metadata_db, "llegeix sample_sheet i cms_labels")
+  Rel(preprocessing, processed_db, "escriu 7 fitxers CSV/JSON")
+```
+
+#### Stage 3: Entrenament
+
+```mermaid
+C4Component
+  title Components — Stage 3: Entrenament (scripts/train.py)
+
+  Person_Ext(researcher, "Investigador", "Executa l'script")
+
+  ContainerDb_Ext(processed_db, "data/processed/", "CSV", "X_train (296x15625), y_train")
+  ContainerDb(models_db, "data/models/", "joblib / JSON", "3 models entrenats + training_log.json")
+
+  Container_Boundary(b1, "scripts/train.py") {
+    Component(train_script, "train.py", "Python script", "Punt d'entrada: entrena 1, 2 o tots 3 models")
+    Component(models_mod, "src/models.py", "Python module", "LogisticRegression (lbfgs), RandomForest (500 arbres), SVM (kernel lineal). Tots amb seed=42 i class_weight=balanced")
+    Component(gdc_utils_tr, "src/gdc_utils.py", "Python module", "repo_root")
+  }
+
+  Rel(researcher, train_script, "executa")
+  Rel(train_script, models_mod, "train_logistic_regression, train_random_forest, train_svm")
+  Rel(train_script, gdc_utils_tr, "repo_root")
+  Rel(models_mod, processed_db, "llegeix X_train, y_train")
+  Rel(models_mod, models_db, "escriu .joblib + training_log.json")
+```
+
+#### Stage 4: Avaluació
+
+```mermaid
+C4Component
+  title Components — Stage 4: Avaluació (scripts/evaluate.py)
+
+  Person_Ext(researcher, "Investigador", "Executa l'script")
+
+  ContainerDb_Ext(models_db, "data/models/", "joblib", "3 models entrenats")
+  ContainerDb_Ext(processed_db, "data/processed/", "CSV", "X_test (74x15625), y_test")
+  ContainerDb(results_db, "results/ + figures/", "JSON / PNG", "Informe d'avaluació + 5 visualitzacions")
+
+  Container_Boundary(b1, "scripts/evaluate.py") {
+    Component(eval_script, "evaluate.py", "Python script", "Punt d'entrada: avalua tots els models en el test set")
+    Component(evaluation, "src/evaluation.py", "Python module", "Mètriques (accuracy, F1-macro, F1-weighted, per classe), confusion matrices, gràfics comparatius, benchmark table")
+    Component(models_mod_ev, "src/models.py", "Python module", "load_processed_data per carregar X_test, y_test")
+    Component(gdc_utils_ev, "src/gdc_utils.py", "Python module", "repo_root")
+  }
+
+  Rel(researcher, eval_script, "executa")
+  Rel(eval_script, evaluation, "evaluate_model, plot_confusion_matrix, plot_metrics_comparison, plot_f1_per_class, build_benchmark_table, save_evaluation_report")
+  Rel(eval_script, models_mod_ev, "load_processed_data")
+  Rel(eval_script, gdc_utils_ev, "repo_root")
+  Rel(evaluation, models_db, "carrega 3 models .joblib")
+  Rel(evaluation, processed_db, "llegeix X_test, y_test")
+  Rel(evaluation, results_db, "escriu evaluation_report.json + 5 PNG")
+```
