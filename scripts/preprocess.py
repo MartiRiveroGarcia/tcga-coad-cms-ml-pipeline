@@ -41,6 +41,7 @@ from src.preprocessing import (
     load_sample_sheet,
     log_transform,
     remove_qc_rows,
+    save_minimal_data,
     save_processed_data,
     split_train_test,
 )
@@ -152,6 +153,15 @@ def main() -> None:
         random_seed=args.seed,
     )
 
+    # Step 6.5: Capture minimal dataset — post-split, pre-filter, pre-log2
+    # These copies are saved after the full pipeline to allow index comparison.
+    X_train_minimal = X_train.copy()
+    X_test_minimal = X_test.copy()
+    logger.info(
+        "Minimal dataset captured: %d samples x %d genes (pre-filter, pre-log2)",
+        X_train_minimal.shape[0], X_train_minimal.shape[1],
+    )
+
     # Step 7: Filter low-count genes (fit on train, apply to both)
     X_train, X_test, kept_genes, gene_filter_stats = filter_low_count_genes(
         X_train, X_test,
@@ -162,7 +172,7 @@ def main() -> None:
     # Step 8: Log2(x+1) transformation
     X_train, X_test = log_transform(X_train, X_test)
 
-    # Step 9: Save outputs
+    # Step 9: Save full processed outputs
     preprocessing_params = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "random_seed": args.seed,
@@ -186,11 +196,24 @@ def main() -> None:
         output_dir, X_train, X_test, y_train, y_test,
         gene_info, kept_genes, gene_filter_stats, preprocessing_params,
     )
+    logger.info("Full dataset saved — %d samples x %d genes (post-filter, log2-transformed)",
+                X_train.shape[0], X_train.shape[1])
+
+    # Step 9.5: Save minimal dataset (post-split, pre-filter, pre-log2)
+    logger.info("── Saving minimal dataset ───────────────────────────────────")
+    save_minimal_data(
+        output_dir,
+        X_train_minimal, X_test_minimal,
+        y_train, y_test,
+        gene_info,
+        X_train, X_test,       # full pipeline matrices for index comparison
+        y_train, y_test,
+    )
 
     logger.info("=== Preprocessing complete ===")
     logger.info("Output: %s", output_dir)
-    logger.info("Train: %d samples x %d genes", X_train.shape[0], X_train.shape[1])
-    logger.info("Test:  %d samples x %d genes", X_test.shape[0], X_test.shape[1])
+    logger.info("Full    — Train: %d samples x %d genes", X_train.shape[0], X_train.shape[1])
+    logger.info("Minimal — Train: %d samples x %d genes", X_train_minimal.shape[0], X_train_minimal.shape[1])
 
 
 if __name__ == "__main__":

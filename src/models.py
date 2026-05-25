@@ -6,7 +6,9 @@ persist the fitted models to disk.
 
 Design contract
 ---------------
-- All models use the same RANDOM_SEED and class_weight='balanced'.
+- All models use the same RANDOM_SEED.
+- class_weight defaults to 'balanced' to compensate for CMS3 minority class;
+  pass class_weight=None to train unbalanced variants (used for H6 statistical test).
 - Each train_* function receives only training data. Test data is never
   seen during training — evaluation happens in a separate stage.
 - No hyperparameter search is performed here; that is stage 5.
@@ -52,31 +54,35 @@ CLASS_WEIGHT: str = "balanced"  # compensates for CMS3 minority (43/296 train sa
 
 def load_processed_data(
     processed_dir: Path,
+    suffix: str = "",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """Load the four processed CSV files produced by scripts/preprocess.py.
 
     Parameters
     ----------
     processed_dir:
-        Path to the directory containing X_train.csv, X_test.csv,
-        y_train.csv and y_test.csv.
+        Path to the directory containing the processed CSV files.
+    suffix:
+        Optional filename suffix to select a dataset variant, e.g.
+        "_minimal_no_lowexpr_no_log2". Empty string loads the default
+        full-pipeline files (X_train.csv, X_test.csv, etc.).
 
     Returns
     -------
     X_train, X_test:
-        Feature matrices (samples × genes, log2-transformed).
+        Feature matrices (samples × genes).
         Row index is the case_id; columns are gene_ids.
     y_train, y_test:
         CMS label Series (index=case_id, values in {CMS1, CMS2, CMS3, CMS4}).
     """
-    logger.info("Loading processed data from %s", processed_dir)
+    logger.info("Loading processed data from %s (suffix=%r)", processed_dir, suffix or "none")
 
-    X_train = pd.read_csv(processed_dir / "X_train.csv", index_col=0)
-    X_test = pd.read_csv(processed_dir / "X_test.csv", index_col=0)
+    X_train = pd.read_csv(processed_dir / f"X_train{suffix}.csv", index_col=0)
+    X_test = pd.read_csv(processed_dir / f"X_test{suffix}.csv", index_col=0)
 
     # y files are saved as single-column DataFrames; squeeze to Series
-    y_train = pd.read_csv(processed_dir / "y_train.csv", index_col=0).squeeze("columns")
-    y_test = pd.read_csv(processed_dir / "y_test.csv", index_col=0).squeeze("columns")
+    y_train = pd.read_csv(processed_dir / f"y_train{suffix}.csv", index_col=0).squeeze("columns")
+    y_test = pd.read_csv(processed_dir / f"y_test{suffix}.csv", index_col=0).squeeze("columns")
 
     logger.info(
         "Loaded — X_train: %s, X_test: %s, y_train: %s, y_test: %s",
@@ -93,6 +99,7 @@ def load_processed_data(
 def train_logistic_regression(
     X_train: pd.DataFrame,
     y_train: pd.Series,
+    class_weight: str | None = CLASS_WEIGHT,
 ) -> LogisticRegression:
     """Fit a multinomial Logistic Regression classifier.
 
@@ -106,6 +113,9 @@ def train_logistic_regression(
         Feature matrix (samples × genes, log2-transformed).
     y_train:
         CMS class labels aligned with X_train rows.
+    class_weight:
+        Passed directly to LogisticRegression. Use 'balanced' (default)
+        for production models or None to train an unbalanced variant.
 
     Returns
     -------
@@ -114,7 +124,7 @@ def train_logistic_regression(
     model = LogisticRegression(
         solver=LR_SOLVER,
         max_iter=LR_MAX_ITER,
-        class_weight=CLASS_WEIGHT,
+        class_weight=class_weight,
         random_state=RANDOM_SEED,
     )
     model.fit(X_train, y_train)
@@ -124,6 +134,7 @@ def train_logistic_regression(
 def train_random_forest(
     X_train: pd.DataFrame,
     y_train: pd.Series,
+    class_weight: str | None = CLASS_WEIGHT,
 ) -> RandomForestClassifier:
     """Fit a Random Forest classifier.
 
@@ -138,6 +149,9 @@ def train_random_forest(
         Feature matrix (samples × genes, log2-transformed).
     y_train:
         CMS class labels aligned with X_train rows.
+    class_weight:
+        Passed directly to RandomForestClassifier. Use 'balanced' (default)
+        for production models or None to train an unbalanced variant.
 
     Returns
     -------
@@ -146,7 +160,7 @@ def train_random_forest(
     model = RandomForestClassifier(
         n_estimators=RF_N_ESTIMATORS,
         max_features=RF_MAX_FEATURES,
-        class_weight=CLASS_WEIGHT,
+        class_weight=class_weight,
         random_state=RANDOM_SEED,
         n_jobs=-1,
     )
@@ -157,6 +171,7 @@ def train_random_forest(
 def train_svm(
     X_train: pd.DataFrame,
     y_train: pd.Series,
+    class_weight: str | None = CLASS_WEIGHT,
 ) -> SVC:
     """Fit a linear Support Vector Machine classifier.
 
@@ -171,6 +186,9 @@ def train_svm(
         Feature matrix (samples × genes, log2-transformed).
     y_train:
         CMS class labels aligned with X_train rows.
+    class_weight:
+        Passed directly to SVC. Use 'balanced' (default) for production
+        models or None to train an unbalanced variant.
 
     Returns
     -------
@@ -180,7 +198,7 @@ def train_svm(
         kernel=SVM_KERNEL,
         max_iter=SVM_MAX_ITER,
         probability=SVM_PROBABILITY,
-        class_weight=CLASS_WEIGHT,
+        class_weight=class_weight,
         random_state=RANDOM_SEED,
     )
     model.fit(X_train, y_train)
@@ -192,6 +210,7 @@ def train_svm(
 def train_all_models(
     X_train: pd.DataFrame,
     y_train: pd.Series,
+    class_weight: str | None = CLASS_WEIGHT,
 ) -> tuple[dict[str, BaseEstimator], dict[str, Any]]:
     """Train all three classifiers and return them with timing metadata.
 
@@ -204,6 +223,9 @@ def train_all_models(
         Feature matrix (samples × genes, log2-transformed).
     y_train:
         CMS class labels aligned with X_train rows.
+    class_weight:
+        Passed to all three classifiers. Use 'balanced' (default) for
+        production models or None to train unbalanced variants.
 
     Returns
     -------
@@ -225,7 +247,7 @@ def train_all_models(
     for name, trainer in trainers.items():
         logger.info("Training %s ...", name)
         t0 = time.perf_counter()
-        model = trainer(X_train, y_train)
+        model = trainer(X_train, y_train, class_weight=class_weight)
         elapsed = time.perf_counter() - t0
         models[name] = model
         timings[name] = elapsed

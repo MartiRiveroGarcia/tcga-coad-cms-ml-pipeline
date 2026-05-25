@@ -408,7 +408,95 @@ def log_transform(
     return X_train_log, X_test_log
 
 
-# ── Step 9: Save outputs ───────────────────────────────────────────────────
+# ── Step 9a: Save minimal dataset (post-split, pre-filter, pre-log2) ─────────
+
+MINIMAL_SUFFIX: str = "_minimal_no_lowexpr_no_log2"
+
+
+def save_minimal_data(
+    output_dir: Path,
+    X_train: pd.DataFrame,
+    X_test: pd.DataFrame,
+    y_train: pd.Series,
+    y_test: pd.Series,
+    gene_info: pd.DataFrame,
+    X_train_full: pd.DataFrame,
+    X_test_full: pd.DataFrame,
+    y_train_full: pd.Series,
+    y_test_full: pd.Series,
+) -> None:
+    """Save the 'minimal' dataset: post-split, pre-low-count-filter, pre-log2.
+
+    Runs validation checks to confirm consistency with the full pipeline output,
+    then writes 5 CSV files with the _minimal_no_lowexpr_no_log2 suffix.
+
+    Parameters
+    ----------
+    output_dir:
+        Directory where all files are written.
+    X_train, X_test:
+        Feature matrices after the train/test split but before any data-dependent
+        transforms (no low-count filter, no log2).
+    y_train, y_test:
+        CMS label Series (same objects as in the full pipeline).
+    gene_info:
+        DataFrame with gene_id and gene_name columns (all protein-coding genes).
+    X_train_full, X_test_full:
+        Full-pipeline feature matrices (post-filter, post-log2), used only to
+        verify that sample IDs match.
+    y_train_full, y_test_full:
+        Full-pipeline labels, used to verify that CMS labels are identical.
+    """
+    assert X_train.shape[0] == y_train.shape[0], (
+        f"Train samples mismatch: X_train={X_train.shape[0]}, y_train={y_train.shape[0]}"
+    )
+    assert X_test.shape[0] == y_test.shape[0], (
+        f"Test samples mismatch: X_test={X_test.shape[0]}, y_test={y_test.shape[0]}"
+    )
+    assert list(X_train.columns) == list(X_test.columns), (
+        "X_train_minimal and X_test_minimal have different columns (genes)"
+    )
+    assert list(X_train.index) == list(X_train_full.index), (
+        "Train sample IDs differ between minimal and full datasets"
+    )
+    assert list(X_test.index) == list(X_test_full.index), (
+        "Test sample IDs differ between minimal and full datasets"
+    )
+    assert list(y_train.values) == list(y_train_full.values), (
+        "Train CMS labels differ between minimal and full datasets"
+    )
+    assert list(y_test.values) == list(y_test_full.values), (
+        "Test CMS labels differ between minimal and full datasets"
+    )
+    has_nan = X_train.isnull().any().any() or X_test.isnull().any().any()
+    assert not has_nan, "NaN values found in minimal dataset"
+    # Cast to float before isinf — integer arrays cannot contain infinity but
+    # the ufunc requires a floating-point type.
+    has_inf = (np.isinf(X_train.values.astype(float)).any()
+               or np.isinf(X_test.values.astype(float)).any())
+    assert not has_inf, "Infinite values found in minimal dataset"
+
+    logger.info("[minimal] All validation checks passed.")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    suffix = MINIMAL_SUFFIX
+    X_train.to_csv(output_dir / f"X_train{suffix}.csv")
+    X_test.to_csv(output_dir / f"X_test{suffix}.csv")
+    y_train.to_csv(output_dir / f"y_train{suffix}.csv", header=True)
+    y_test.to_csv(output_dir / f"y_test{suffix}.csv", header=True)
+
+    # Gene names for all protein-coding genes (low-count filter not applied)
+    all_gene_ids = set(X_train.columns.tolist())
+    gene_names = gene_info[gene_info["gene_id"].isin(all_gene_ids)][["gene_id", "gene_name"]]
+    gene_names.to_csv(output_dir / f"gene_names{suffix}.csv", index=False)
+
+    logger.info(
+        "[minimal] Saved 5 files to %s — X_train: %s (%d genes), X_test: %s",
+        output_dir, X_train.shape, X_train.shape[1], X_test.shape,
+    )
+
+
+# ── Step 9b: Save full outputs ─────────────────────────────────────────────
 
 def save_processed_data(
     output_dir: Path,
@@ -421,14 +509,14 @@ def save_processed_data(
     gene_filter_stats: pd.DataFrame,
     params: dict[str, Any],
 ) -> None:
-    """Save all processed data to CSV files and a JSON log.
+    """Save the full processed dataset (post-filter, post-log2) to CSV files and a JSON log.
 
     Output files:
-        X_train.csv          — samples as rows, genes as columns (log2-transformed)
-        X_test.csv           — same format
-        y_train.csv          — case_id, cms_label
-        y_test.csv           — case_id, cms_label
-        gene_names.csv       — gene_id -> gene_name mapping for kept genes
+        X_train.csv           — samples as rows, genes as columns (log2-transformed)
+        X_test.csv            — same format
+        y_train.csv           — case_id, cms_label
+        y_test.csv            — case_id, cms_label
+        gene_names.csv        — gene_id -> gene_name mapping for kept genes
         gene_filter_stats.csv — per-gene expression rate and filter decision
         preprocessing_log.json — full record of parameters and counts
     """
