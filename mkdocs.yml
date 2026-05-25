@@ -9,13 +9,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 nav:
   - Inici: index.md
-  - Projecte: project.md
-  - Pipeline: pipeline.md
-  - Dades: data.md
-  - Exploració: exploration.md
-  - Entrenament: training.md
-  - Avaluació: evaluation.md
-  - Reproductibilitat: reproducibility.md
-  - Glossari: glossary.md
-  - Requisits: requirements.md
-  - KPIs: KPI_CHECKLIST.md
+  - Execució: execucio.md
+  - Dades i pipeline: pipeline.md
+  - Experiments i resultats: resultats.md
+  - Reproductibilitat i referència: referencia.md

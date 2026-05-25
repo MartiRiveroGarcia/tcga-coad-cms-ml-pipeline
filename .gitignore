@@ -6,6 +6,9 @@ data/raw/
 data/processed/
 data/models/
 
+# Evaluation results (regenerable from models + test data)
+results/
+
 # Python
 __pycache__/
 *.py[cod]

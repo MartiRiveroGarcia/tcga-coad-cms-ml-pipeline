@@ -1,507 +1,263 @@
-# Pipeline
+# Dades i pipeline
 
-## Visió general
+Aquesta pàgina descriu l’origen de les dades, l’estructura del repositori i el funcionament intern del pipeline. També inclou els diagrames C4 que expliquen el sistema en diferents nivells de detall.
 
-El pipeline transforma dades d'expressió gènica en una comparativa de models de classificació.
-Cada etapa és un script independent que es pot executar per separat.
+## Origen de les dades
 
-```
-Dades RNA-seq (TCGA-COAD)
-        │
-        ▼
-   DESCÀRREGA ────────── scripts/download.py
-   Descarrega fitxers       src/gdc_utils.py
-   del GDC Portal
-        │
-        ▼
-   PREPROCESSAMENT ───── scripts/preprocess.py
-   Filtra gens sorollosos,   src/preprocessing.py
-   normalitza, split
-   train/test
-        │
-        ▼
-   EXPLORACIÓ ─────────── notebooks/data_exploration.ipynb
-   PCA + UMAP per             src/dimensionality_reduction.py
-   verificar dades i
-   avaluar separabilitat
-        │
-        ▼
-   ENTRENAMENT ────────── scripts/train.py
-   Entrena 3 models            src/models.py
-   amb les mateixes dades
-   i la mateixa seed
-        │
-        ▼
-   AVALUACIÓ ──────────── scripts/evaluate.py
-   Mètriques, gràfics,        src/evaluation.py
-   taula comparativa
-```
+El projecte utilitza dades d’expressió gènica RNA-seq de la cohort TCGA-COAD. Els fitxers provenen del Genomic Data Commons i es descarreguen mitjançant un manifest versionat dins de `data/metadata/`.
 
-## Etapa 1: Descàrrega de dades
+El pipeline no treballa amb fitxers FASTQ ni fa alineament de seqüències. Parteix de fitxers STAR-Counts ja quantificats, que contenen comptatges d’expressió gènica per mostra.
 
-**Script:** `scripts/download.py`
-**Mòdul:** `src/gdc_utils.py`
+| Element | Valor |
+|---|---|
+| Cohort | TCGA-COAD |
+| Tipus de dada | RNA-seq |
+| Workflow | STAR-Counts |
+| Tipus de mostra | Tumor primari |
+| Accés | Dades públiques del GDC |
+| Etiquetes | Subtipus CMS provinents de metadades externes |
 
-Descarrega les dades RNA-seq del GDC Data Portal usant el manifest que hi ha a `data/metadata/`.
-Si l'eina `gdc-client` no està instal·lada, la descarrega i instal·la automàticament.
+## Què es versiona i què no?
 
-**Entrada:** manifest GDC (`data/metadata/gdc_manifest*.txt`)
-**Sortida:** fitxers RNA-seq a `data/raw/gdc/`
+El repositori només versiona fitxers petits o necessaris per reconstruir el projecte. Les dades grans i els artefactes regenerables queden exclosos del control de versions.
 
-Veure [Dades](data.md) per a més detalls sobre el dataset i els criteris de selecció.
+| Ruta | Contingut | Es versiona? | Motiu |
+|---|---|---|---|
+| `data/metadata/` | Manifests, sample sheets i etiquetes CMS | Sí | Permeten reconstruir el dataset |
+| `data/raw/gdc/` | Fitxers RNA-seq descarregats | No | Són grans i es poden descarregar de nou |
+| `data/processed/` | Matrius processades | No | Es generen amb `preprocess.py` |
+| `data/models/` | Models entrenats | No | Es generen amb `train.py` |
+| `results/` | Informes d’avaluació | No | Es generen amb `evaluate.py` |
+| `figures/` | Figures finals i gràfics | Depèn del criteri del projecte | Poden servir per documentar resultats |
 
-## Etapa 2: Preprocessament
+## Estructura del repositori
 
-**Script:** `scripts/preprocess.py`
-**Mòdul:** `src/preprocessing.py`
-
-Transforma 483 fitxers de comptatge en un dataset net llest per entrenar models.
-S'executa amb una sola comanda:
-
-```bash
-python scripts/preprocess.py
+```text
+tcga-coad-cms-ml-pipeline/
+├── data/
+│   ├── metadata/       # manifests, sample sheets i etiquetes CMS
+│   ├── raw/gdc/        # fitxers RNA-seq descarregats
+│   ├── processed/      # dades transformades per als models
+│   └── models/         # models entrenats
+├── docs/               # documentació MkDocs
+├── figures/            # figures generades
+├── notebooks/          # exploració i anàlisi interactiva
+├── results/            # mètriques i informes d’avaluació
+├── scripts/            # punts d’entrada executables
+├── src/                # mòduls reutilitzables
+├── tools/              # eines externes, com gdc-client
+├── environment.yml
+└── README.md
 ```
 
-**Entrada:** fitxers RNA-seq a `data/raw/gdc/` + metadades a `data/metadata/`
-**Sortida:** 6 fitxers a `data/processed/` (veure [sortida](#sortida-de-letapa-2))
+La separació entre `scripts/` i `src/` és una decisió arquitectònica important. Els scripts actuen com a punts d’entrada executables i orquestren cada etapa. Els mòduls de `src/` contenen la lògica reutilitzable que pot ser cridada per scripts, notebooks o tests.
 
-### Visió general dels passos
+## Visió general del pipeline
 
-El preprocessament es divideix en **dos blocs** separats pel train/test split.
-Aquesta divisió és fonamental per evitar **data leakage** (veure nota més avall).
+El pipeline s’executa en quatre etapes productives:
 
-```
-483 fitxers raw
-      │
-      ▼
-  BLOC 1: Neteja segura (no mira valors d'expressió)
-  ├── Pas 1: Construir matriu (60.664 gens × 483 fitxers)
-  ├── Pas 2: Eliminar files QC — 4 files de metadades d'alineament
-  ├── Pas 3: Filtrar gens protein-coding (60.660 → 19.962)
-  ├── Pas 4: Deduplicar mostres (483 → 458)
-  └── Pas 5: Unir amb etiquetes CMS (458 → 370)
-      │
-      ▼
-  Pas 6: TRAIN/TEST SPLIT (296 train / 74 test, seed=42)
-      │
-      ▼
-  BLOC 2: Transformacions (fit on train, apply to both)
-  ├── Pas 7: Filtrar gens amb baix comptatge (19.962 → 15.625)
-  └── Pas 8: Transformació log2(x + 1)
-      │
-      ▼
-  Pas 9: Guardar tot a data/processed/
+```text
+1. Descàrrega       scripts/download.py      src/gdc_utils.py
+2. Preprocessament  scripts/preprocess.py    src/preprocessing.py
+3. Entrenament      scripts/train.py         src/models.py
+4. Avaluació        scripts/evaluate.py      src/evaluation.py
 ```
 
-### Bloc 1: Neteja segura (abans del split)
+L’exploració amb notebooks no es considera una etapa productiva del pipeline. És una etapa d’anàlisi que ajuda a validar les dades i interpretar resultats, però no modifica els fitxers que entren als models.
 
-Aquests passos **no generen data leakage** perquè les decisions es basen en
-metadades o anotacions externes, no en la distribució dels valors d'expressió.
+## Contracte de les etapes
 
-**Pas 1 — Construir matriu d'expressió (60.664 gens × 483 fitxers).** Cada fitxer STAR-Counts
-conté 9 columnes. Nosaltres n'extraiem només una: `unstranded` (comptatges raw sense
-distinció de cadena). Per què aquesta i no `tpm_unstranded` o `fpkm_unstranded`?
-
-- **TPM/FPKM** ja estan normalitzats per longitud de gen i profunditat de seqüenciació.
-  Això sembla convenient, però impedeix aplicar les nostres pròpies transformacions
-  (filtratge per comptatge mínim, log2) de manera correcta.
-- **Comptatges raw** permeten controlar tot el procés de normalització, que és el que
-  volem en un pipeline reproduïble.
-
-El pipeline llegeix cada fitxer TSV dins de `data/raw/gdc/<UUID>/`, n'extreu la columna
-`unstranded`, i els combina en una matriu única on cada fila és un gen i cada columna
-és un fitxer.
-
-**Pas 2 — Eliminar 4 files QC.** Les primeres 4 files de cada fitxer STAR-Counts
-no són gens reals, sinó estadístiques de l'alineament:
-
-| Fila | Significat |
-|------|-----------|
-| `N_unmapped` | Lectures que no s'han pogut alinear al genoma |
-| `N_multimapping` | Lectures que mapegen a múltiples ubicacions |
-| `N_noFeature` | Lectures alineades però que no cauen dins de cap gen |
-| `N_ambiguous` | Lectures que cauen en zones on es solapen gens |
-
-Si les deixéssim, els algorismes de ML les tractarien com a gens reals. S'eliminen.
-
-**Pas 3 — Filtrar gens protein-coding (60.660 → 19.962 gens, eliminats 40.698).**
-L'anotació GENCODE v36 classifica cada gen per tipus. D'un total de ~60.660 gens,
-només ~19.962 són de tipus `protein_coding` — la resta inclou:
-
-- **lncRNA** (~16.000) — RNA llarg no codificant
-- **Pseudogens** (~15.000) — còpies de gens que ja no es tradueixen
-- **Altres** (~9.000) — miRNA, rRNA, snRNA, etc.
-
-Per què els eliminem? La classificació CMS es basa en signatures d'expressió de
-**proteïnes**. Els gens no codificants introdueixen dimensions addicionals (soroll)
-sense aportar senyal discriminatiu, i augmenten el risc de sobreajustament.
-
-**Pas 4 — Deduplicar mostres (483 → 458 mostres, eliminades 25).**
-El dataset conté 483 fitxers però només 458 pacients únics. Els 25 fitxers sobrants
-s'eliminen en tres passos:
-
-| Tipus | Eliminades | Per què? |
-|-------|-----------|---------|
-| Mostres FFPE | 13 | La fixació en formalina (FFPE) altera el perfil d'expressió — les lectures RNA-seq d'FFPE tenen més degradació i biaixos que les de teixit congelat. Barrejar-les introduiria variabilitat tècnica, no biològica |
-| Mostres no primàries | 2 | Una mostra metastàtica (06A) i una de recurrència (02A). El nostre objectiu és classificar tumors primaris (01A); metàstasis i recurrències tenen perfils d'expressió diferents |
-| Duplicats per pacient | 10 | 10 pacients (sèrie A6-*) tenen 2 fitxers vàlids cadascun. Per a cada duplicat, es reté el fitxer amb **major profunditat de seqüenciació** (suma total de comptatges), perquè conté més informació |
-
-Després d'aquest pas, tenim exactament **1 fitxer per pacient** (458 mostres).
-
-**Pas 5 — Unir amb etiquetes CMS (458 → 370 mostres, descartades 88).**
-Es fa un inner join entre la matriu i les etiquetes CMS de Guinney et al. 2015
-(veure [Dades — Etiquetes CMS](data.md#etiquetes-cms-consensus-molecular-subtypes)).
-
-No tots els pacients TCGA-COAD tenen etiqueta CMS — 88 no van ser inclosos a l'estudi
-del consorci o van rebre etiqueta `NOLBL`/`UNK` (no classificable). Sense etiqueta,
-no podem usar-los per a aprenentatge supervisat. Resultat: **370 mostres**.
-
-Distribució:
-
-| Subtipus | Mostres | % |
-|----------|---------|---|
-| CMS2 | 145 | 39% |
-| CMS4 | 100 | 27% |
-| CMS1 | 71 | 19% |
-| CMS3 | 54 | 15% |
-
-### Pas 6: Train/test split
-
-Dividim les 370 mostres en **296 entrenament** i **74 test** (80/20).
-El split és **estratificat**: les proporcions de CMS1-4 es mantenen en ambdós conjunts.
-Això és important perquè CMS3 (54 mostres) és minoritària — un split aleatori podria
-deixar molt poques mostres de CMS3 al test.
-
-| Subtipus | Train | Test | Total |
-|----------|-------|------|-------|
-| CMS1 | 57 | 14 | 71 |
-| CMS2 | 116 | 29 | 145 |
-| CMS3 | 43 | 11 | 54 |
-| CMS4 | 80 | 20 | 100 |
-| **Total** | **296** | **74** | **370** |
-
-La **seed=42** fixa l'aleatorietat. Executar el pipeline dos cops amb la mateixa seed
-produeix exactament la mateixa partició — requisit fonamental per a la reproducibilitat.
-
-### Bloc 2: Transformacions (després del split)
-
-Aquí sí que mirem els valors d'expressió per prendre decisions. Per evitar data leakage,
-els criteris es calculen **només sobre el conjunt d'entrenament** i s'apliquen
-idènticament al de test.
-
-> **Data leakage**: si normalitzes o filtres amb informació del conjunt de test,
-> el model "veu" indirectament dades que no hauria de veure durant l'entrenament.
-> Això produeix mètriques massa optimistes que no reflecteixen el rendiment real.
-
-**Pas 7 — Filtrar gens amb baix comptatge (19.962 → 15.625 gens, eliminats 4.337).**
-Un gen es reté si almenys el **20% de les mostres d'entrenament** (≥ 60 de 296) tenen
-un comptatge **≥ 10**. Un gen que s'expressa en poques mostres o amb comptatges molt
-baixos és probablement soroll tècnic. Mantenir-lo afegeix dimensions inútils que
-dificulten l'aprenentatge.
-
-**Important:** el criteri es calcula **només sobre train**. Després, els mateixos 15.625
-gens es retenen a test. Si calculéssim el filtre sobre totes les dades, estaríem
-usant informació del test per decidir quins gens conservar → data leakage.
-
-**Pas 8 — Transformació log2(x + 1). Rang resultant: [0.00, 20.71].**
-Les dades raw d'RNA-seq tenen una distribució molt esbiaixada: la majoria de gens
-tenen comptatges baixos (0–100) però alguns arriben a milions. La transformació
-`log2(x + 1)` comprimeix el rang:
-
-| Valor original | Valor log2 |
-|---------------|-----------|
-| 0 | 0.00 |
-| 10 | 3.46 |
-| 1.000 | 9.97 |
-| 100.000 | 16.61 |
-| 1.700.000 | 20.71 |
-
-El `+1` evita `log2(0) = -infinit`. Aquesta transformació és **stateless** (no té
-paràmetres que es calculin sobre les dades), però s'aplica després del split per
-convenció — si en el futur s'afegís una normalització z-score, la mitjana i
-desviació s'haurien de calcular sobre train i aplicar a test.
-
-### Sortida de l'etapa 2
-
-Tots els fitxers es guarden a `data/processed/`:
-
-| Fitxer | Contingut | Format |
-|--------|-----------|--------|
-| `X_train.csv` | 296 mostres × 15.625 gens (log2) | Mostres com a files, gens com a columnes |
-| `X_test.csv` | 74 mostres × 15.625 gens (log2) | Idem |
-| `y_train.csv` | Etiqueta CMS per cada mostra train | case_id, cms_label |
-| `y_test.csv` | Etiqueta CMS per cada mostra test | case_id, cms_label |
-| `gene_names.csv` | Mapatge gene_id → gene_name | Per interpretar resultats |
-| `preprocessing_log.json` | Tots els paràmetres i comptadors | Per auditoria |
-
-### Opcions del script
-
-```bash
-# Veure què faria sense processar
-python scripts/preprocess.py --dry-run
-
-# Canviar seed o proporció de test
-python scripts/preprocess.py --seed 123 --test-size 0.3
-```
-
-## Etapa 3: Exploració de dades
-
-**Notebook:** `notebooks/data_exploration.ipynb`
-**Mòdul:** `src/dimensionality_reduction.py`
-
-Abans d'entrenar cap model, cal verificar que les dades preprocessades són correctes
-i que els subtipus CMS es poden separar. Aquesta etapa és purament d'**anàlisi**:
-no modifica les dades ni genera fitxers nous a `data/processed/`.
-
-**Entrada:** dades processades de `data/processed/`
-**Sortida:** gràfics a `figures/` (per a la memòria del TFG)
-
-Les tècniques usades i les conclusions obtingudes estan documentades a [Exploració](exploration.md).
-
-> **Nota:** PCA i UMAP s'usen aquí exclusivament per **visualitzar** les dades.
-> Els models d'entrenament (etapa 4) reben les 15.625 dimensions originals,
-> no les components reduïdes.
-
-## Etapa 4: Entrenament
-
-**Script:** `scripts/train.py`
-**Mòdul:** `src/models.py`
-
-Entrena 3 models de classificació amb les mateixes dades d'entrenament i la mateixa seed,
-garantint una comparativa justa. Tots els models usen `class_weight='balanced'` per
-compensar el desbalanceig de classes (CMS3 = 15% del train).
-
-| Model | Tipus | Per què? |
-|-------|-------|----------|
-| Logistic Regression | Lineal | Baseline interpretable; els coeficients indiquen quins gens discriminen |
-| Random Forest | Ensemble (arbres) | Robust en alta dimensió; feature importance per gen |
-| SVM | Kernel lineal | Excel·lent quan n_features >> n_samples (15.625 gens > 296 mostres) |
-
-**Entrada:** dades processades de `data/processed/` (296 × 15.625)
-**Sortida:** `data/models/*.joblib` + `training_log.json` (no al repositori git)
-
-> **Nota:** els models NO es guarden al repositori — es poden regenerar en minuts
-> amb `python scripts/train.py`. El `training_log.json` documenta tots els hiperparàmetres.
-
-Veure [Entrenament](training.md) per a tots els detalls de disseny i hiperparàmetres.
-
-## Etapa 5: Avaluació
-
-**Script:** `scripts/evaluate.py`
-**Mòdul:** `src/evaluation.py`
-
-Mesura el rendiment de cada model amb dades que **mai ha vist** (test set) i genera
-visualitzacions comparatives:
-
-- **Mètriques per model:** accuracy, precision, recall, F1-score (macro i weighted)
-- **Confusion matrix:** taula que mostra encerts i errors per cada subtipus CMS
-- **Taula comparativa (benchmark):** els 3 models costat a costat
-- **F1 per classe:** mostra quins subtipus CMS son fàcils o difícils per a cada model
-
-**Entrada:** models entrenats de `data/models/` + dades de test de `data/processed/`
-**Sortida:** `results/evaluation_report.json` + gràfics a `figures/`
-
-> **Nota:** `results/` no s'inclou al repositori git — es pot regenerar en segons
-> amb `python scripts/evaluate.py`. Les figures de `figures/` sí que es versionan.
-
-Veure [Avaluació](evaluation.md) per a tots els detalls de mètriques i interpretació.
-
-## Dades d'entrada
-
-### Què és RNA-seq?
-
-RNA-seq mesura quant s'expressa cada gen en una mostra de teixit. El resultat és una taula on:
-- Cada **fila** és un gen (~60.000 gens)
-- Cada **columna** és una mostra (un pacient)
-- Cada **valor** és un comptatge (quantes vegades s'ha detectat aquell gen)
-
-### Què són els subtipus CMS?
-
-El càncer colorectal es classifica en 4 subtipus moleculars (Consensus Molecular Subtypes):
-
-| Subtipus | Nom | Característiques principals |
-|----------|-----|----------------------------|
-| CMS1 | MSI Immune | Hipermutació, activació immune |
-| CMS2 | Canonical | Activació WNT i MYC |
-| CMS3 | Metabolic | Desregulació metabòlica |
-| CMS4 | Mesenchymal | Activació TGF-β, pitjor pronòstic |
-
-L'objectiu del pipeline és entrenar models que, donada l'expressió gènica d'una mostra,
-prediguin a quin subtipus CMS pertany.
+| Etapa | Entrada | Procés | Sortida |
+|---|---|---|---|
+| Descàrrega | Manifest GDC a `data/metadata/` | Instal·la o localitza `gdc-client` i descarrega els fitxers | Fitxers RNA-seq a `data/raw/gdc/` |
+| Preprocessament | Fitxers raw i metadades | Construeix matriu, filtra, uneix etiquetes, separa train/test i transforma | `X_train`, `X_test`, `y_train`, `y_test` i logs |
+| Entrenament | Dades processades de train | Entrena Logistic Regression, Random Forest i SVM | Models `.joblib` i `training_log.json` |
+| Avaluació | Models entrenats i dades de test | Calcula mètriques i figures | `evaluation_report.json` i gràfics |
 
 ## Arquitectura C4
 
-El [model C4](https://c4model.com/) documenta l'arquitectura en 3 nivells de zoom progressiu:
-**Context** (el sistema i el seu entorn), **Contenidors** (les parts principals i el flux de dades) i
-**Components** (els mòduls interns de cada etapa).
+El model C4 permet documentar arquitectura amb diferents nivells de zoom. En aquesta documentació s’utilitzen tres nivells: context, contenidors i components. El nivell de context mostra el sistema i els actors externs; el nivell de contenidors mostra les parts principals del sistema; i el nivell de components mostra l’estructura interna de cada etapa.
 
-### Nivell 1 — Context
+### Nivell 1: context del sistema
 
-> *Qui usa el sistema i amb quins sistemes externs interactua?*
+![Diagrama C4 de context](assets/diagrames/c4-context.png)
 
-```mermaid
-C4Context
-  title Context del sistema — TCGA-COAD CMS ML Pipeline
+El diagrama de context mostra el pipeline com un sistema de software complet. L’actor principal és l’investigador o investigadora, que executa el pipeline i consulta la documentació.
 
-  Person(researcher, "Investigador / Bioinformàtic", "Executa el pipeline i interpreta els resultats de classificació CMS")
+El sistema interactua amb tres elements externs:
 
-  System(pipeline, "TCGA-COAD CMS ML Pipeline", "Pipeline reproduïble per classificar subtipus CMS de càncer colorectal a partir de dades RNA-seq")
+| Element extern | Funció dins del projecte |
+|---|---|
+| Genomic Data Commons | Proporciona els fitxers RNA-seq i les metadades de descàrrega |
+| Synapse | Proporciona recursos externs relacionats amb les etiquetes CMS |
+| GitHub Pages | Publica la documentació tècnica generada amb MkDocs |
 
-  System_Ext(gdc, "GDC Data Portal (NCI)", "Proveeix fitxers RNA-seq STAR-Counts de 483 pacients TCGA-COAD via gdc-client 2.3.0")
-  System_Ext(synapse, "Synapse (syn4978511)", "Proveeix etiquetes CMS consens de Guinney et al. 2015")
-  System_Ext(ghpages, "GitHub Pages", "Allotja la documentació pública generada per MkDocs via GitHub Actions CI/CD")
+Aquest nivell respon a la pregunta: **qui utilitza el sistema i amb quines fonts externes es relaciona?**
 
-  Rel(researcher, pipeline, "Executa les 4 etapes del pipeline")
-  Rel(gdc, pipeline, "483 fitxers STAR-Counts RNA-seq")
-  Rel(synapse, pipeline, "Etiquetes CMS consens")
-  Rel(pipeline, ghpages, "Documentació desplegada")
+### Nivell 2: contenidors
+
+![Diagrama C4 de contenidors](assets/diagrames/c4-containers.png)
+
+El diagrama de contenidors amplia el sistema i mostra les parts principals del projecte. Dins del pipeline apareixen quatre etapes productives: obtenció de dades, preprocessament, entrenament i avaluació.
+
+També s’hi mostra la documentació com un bloc separat. Aquesta documentació es construeix amb MkDocs i es publica a GitHub Pages. Els notebooks apareixen com a suport tècnic per entendre decisions, paràmetres i resultats, però no substitueixen els scripts del pipeline.
+
+La lectura del diagrama és la següent:
+
+1. L’investigador o investigadora executa les etapes del pipeline.
+2. La primera etapa obté dades del GDC.
+3. Les metadades i etiquetes externes es guarden a `data/metadata/`.
+4. El preprocessament genera dades netes a `data/processed/`.
+5. L’entrenament genera models a `data/models/`.
+6. L’avaluació genera resultats i figures.
+7. La documentació explica el procés i es publica a GitHub Pages.
+
+Aquest nivell respon a la pregunta: **quines parts formen el sistema i com flueixen les dades?**
+
+## Components de cada etapa
+
+### Etapa 1: obtenció de dades
+
+![Components de l’etapa d’obtenció de dades](assets/diagrames/c4-components-download.png)
+
+L’etapa d’obtenció de dades té com a punt d’entrada `scripts/download.py`. Aquest script no concentra tota la lògica, sinó que delega les funcions reutilitzables a `src/gdc_utils.py`.
+
+| Component | Responsabilitat |
+|---|---|
+| `scripts/download.py` | Punt d’entrada executable de la descàrrega |
+| `src/gdc_utils.py` | Funcions per localitzar, descarregar i executar `gdc-client` |
+| `tools/gdc-client/` | Directori on es guarda l’eina externa de descàrrega |
+| `data/metadata/` | Directori amb manifests i metadades |
+| `data/raw/gdc/` | Directori on es guarden els fitxers descarregats |
+
+El flux principal és:
+
+```text
+scripts/download.py
+        │
+        ▼
+src/gdc_utils.py
+        │
+        ├── llegeix manifest a data/metadata/
+        ├── comprova o descarrega gdc-client
+        └── desa els fitxers a data/raw/gdc/
 ```
 
-### Nivell 2 — Contenidors
+Aquesta separació facilita la reutilització del codi. Si en el futur cal canviar la manera de descarregar dades, el canvi es pot concentrar a `src/gdc_utils.py`.
 
-> *Quines parts principals té el sistema i com flueixen les dades entre elles?*
+### Etapa 2: preprocessament
 
-```mermaid
-C4Container
-  title Contenidors — Etapes del pipeline i magatzems de dades
+![Components de l’etapa de preprocessament](assets/diagrames/c4-components-preprocess.png)
 
-  System_Ext(gdc, "GDC Data Portal (NCI)", "Font de dades RNA-seq")
-  System_Ext(synapse, "Synapse (syn4978511)", "Font d'etiquetes CMS consens")
+L’etapa de preprocessament transforma els fitxers RNA-seq descarregats en una matriu apta per entrenar models. El punt d’entrada és `scripts/preprocess.py`, mentre que la lògica principal viu a `src/preprocessing.py`.
 
-  Container_Boundary(b1, "TCGA-COAD CMS ML Pipeline") {
-    Container(stage_download, "Stage 1: Descàrrega", "Python / gdc-client", "Descarrega fitxers RNA-seq del GDC Portal")
-    Container(stage_preprocess, "Stage 2: Preprocessament", "Python / pandas, scikit-learn", "Construeix matriu, filtra gens, normalitza i fa el split train/test")
-    Container(stage_train, "Stage 3: Entrenament", "Python / scikit-learn", "Entrena 3 classificadors: LR, Random Forest i SVM amb seed=42")
-    Container(stage_evaluate, "Stage 4: Avaluació", "Python / matplotlib", "Avalua en test, genera mètriques i figures comparatives")
+| Component | Responsabilitat |
+|---|---|
+| `scripts/preprocess.py` | Orquestra el preprocessament |
+| `src/preprocessing.py` | Implementa neteja, filtratge, split i transformació |
+| `data/raw/gdc/` | Entrada amb fitxers RNA-seq descarregats |
+| `data/metadata/` | Entrada amb metadades i etiquetes |
+| `data/processed/` | Sortida amb matrius i logs processats |
 
-    ContainerDb(metadata_db, "data/metadata/", "CSV / TSV / JSON", "Manifests GDC + etiquetes CMS (versionat al git)")
-    ContainerDb(raw_db, "data/raw/gdc/", "TSV", "483 fitxers STAR-Counts descarregats (no al git)")
-    ContainerDb(processed_db, "data/processed/", "CSV / JSON", "X_train, X_test, y_train, y_test, gene_names, logs")
-    ContainerDb(models_db, "data/models/", "joblib", "3 models entrenats (no al git)")
-    ContainerDb(results_db, "results/ + figures/", "JSON / PNG", "Informe d'avaluació + 5 visualitzacions")
-  }
+El preprocessament s’organitza en dos blocs:
 
-  Rel(gdc, stage_download, "STAR-Counts TSV via gdc-client")
-  Rel(synapse, metadata_db, "cms_labels_public_all.txt (descàrrega manual prèvia)")
+```text
+Bloc 1: neteja segura abans del split
+  ├── construir matriu d’expressió
+  ├── eliminar files QC
+  ├── filtrar gens protein-coding
+  ├── deduplicar mostres
+  └── unir amb etiquetes CMS
 
-  Rel(metadata_db, stage_download, "gdc_manifest*.txt")
-  Rel(stage_download, raw_db, "483 fitxers TSV (~2 GB)")
+Split train/test
 
-  Rel(raw_db, stage_preprocess, "matriu d'expressió raw")
-  Rel(metadata_db, stage_preprocess, "sample_sheet + cms_labels")
-  Rel(stage_preprocess, processed_db, "X/y train+test (296/74), gene_names, logs")
-
-  Rel(processed_db, stage_train, "X_train (296x15625), y_train")
-  Rel(stage_train, models_db, "3 fitxers .joblib + training_log.json")
-
-  Rel(models_db, stage_evaluate, "3 models entrenats")
-  Rel(processed_db, stage_evaluate, "X_test (74x15625), y_test")
-  Rel(stage_evaluate, results_db, "evaluation_report.json + 5 PNG")
+Bloc 2: transformacions després del split
+  ├── filtrar gens amb baix comptatge usant només train
+  └── aplicar log2(x + 1)
 ```
 
-### Nivell 3 — Components per etapa
+La separació abans i després del split evita que el conjunt de test influeixi en decisions de preprocessament que haurien de calcular-se només amb les dades d’entrenament.
 
-> *Quins mòduls interns usa cada script i com interactuen?*
+### Etapa 3: entrenament
 
-#### Stage 1: Descàrrega
+![Components de l’etapa d’entrenament](assets/diagrames/c4-components-train.png)
 
-```mermaid
-C4Component
-  title Components — Stage 1: Descàrrega (scripts/download.py)
+L’etapa d’entrenament carrega les dades processades i entrena els classificadors. El punt d’entrada és `scripts/train.py` i la lògica dels models es troba a `src/models.py`.
 
-  Person_Ext(researcher, "Investigador", "Executa l'script")
-  System_Ext(gdc, "GDC Data Portal (NCI)", "Font de dades RNA-seq")
+| Component | Responsabilitat |
+|---|---|
+| `scripts/train.py` | Punt d’entrada de l’entrenament |
+| `src/models.py` | Funcions de càrrega de dades i entrenament dels models |
+| `data/processed/` | Entrada amb `X_train` i `y_train` |
+| `data/models/` | Sortida amb models entrenats |
 
-  ContainerDb_Ext(metadata_db, "data/metadata/", "TSV", "gdc_manifest*.txt")
-  ContainerDb(raw_db, "data/raw/gdc/", "TSV", "Fitxers STAR-Counts descarregats")
+Els models entrenats són:
 
-  Container_Boundary(b1, "scripts/download.py") {
-    Component(download_script, "download.py", "Python script", "Punt d'entrada: llegeix el manifest i orquestra la descàrrega")
-    Component(gdc_utils, "src/gdc_utils.py", "Python module", "Detecció de plataforma, instal·lació i execució de gdc-client 2.3.0")
-  }
+- Logistic Regression.
+- Random Forest.
+- SVM amb kernel lineal.
 
-  Rel(researcher, download_script, "executa")
-  Rel(download_script, metadata_db, "llegeix manifest (auto-detect newest)")
-  Rel(download_script, gdc_utils, "ensure_gdc_client, detect_platform_key")
-  Rel(gdc_utils, gdc, "descarrega gdc-client 2.3.0 si no existeix", "HTTPS")
-  Rel(gdc_utils, gdc, "executa gdc-client download", "API")
-  Rel(gdc, raw_db, "483 STAR-Counts TSV (~2 GB)")
+Tots els models reben la mateixa matriu d’entrenament i les mateixes etiquetes. Això permet comparar-los en condicions homogènies.
+
+### Etapa 4: avaluació
+
+![Components de l’etapa d’avaluació](assets/diagrames/c4-components-evaluate.png)
+
+L’etapa d’avaluació carrega els models entrenats i les dades de test. El punt d’entrada és `scripts/evaluate.py`. Les funcions de càlcul de mètriques i generació de figures es troben a `src/evaluation.py`.
+
+| Component | Responsabilitat |
+|---|---|
+| `scripts/evaluate.py` | Punt d’entrada de l’avaluació |
+| `src/evaluation.py` | Càlcul de mètriques, matrius de confusió i gràfics |
+| `src/models.py` | Funcions de càrrega de dades o models quan cal |
+| `data/models/` | Entrada amb models entrenats |
+| `data/processed/` | Entrada amb `X_test` i `y_test` |
+| `results/` | Sortida amb informes numèrics |
+| `figures/` | Sortida amb figures d’avaluació |
+
+Aquesta etapa no entrena cap model. Només avalua models ja generats sobre dades que no s’han utilitzat durant l’entrenament.
+
+## Flux de fitxers
+
+```text
+data/metadata/
+   │
+   ▼
+scripts/download.py
+   │
+   ▼
+data/raw/gdc/
+   │
+   ▼
+scripts/preprocess.py
+   │
+   ▼
+data/processed/
+   │
+   ▼
+scripts/train.py
+   │
+   ▼
+data/models/
+   │
+   ▼
+scripts/evaluate.py
+   │
+   ├── results/evaluation_report.json
+   └── figures/*.png
 ```
 
-#### Stage 2: Preprocessament
+## Decisions tècniques principals
 
-```mermaid
-C4Component
-  title Components — Stage 2: Preprocessament (scripts/preprocess.py)
+| Decisió | Justificació |
+|---|---|
+| Separar `scripts/` i `src/` | Manté punts d’entrada simples i lògica reutilitzable |
+| No versionar dades raw | Evita pujar fitxers grans i regenerables |
+| Guardar manifests | Permet reconstruir el mateix dataset |
+| Fer split abans de transformacions dependents de dades | Redueix el risc de data leakage |
+| Entrenar tots els models amb el mateix split | Permet una comparació justa |
+| Guardar logs i artefactes | Facilita auditoria i reproducció |
 
-  Person_Ext(researcher, "Investigador", "Executa l'script")
+## Resum
 
-  ContainerDb_Ext(raw_db, "data/raw/gdc/", "TSV", "483 fitxers STAR-Counts")
-  ContainerDb_Ext(metadata_db, "data/metadata/", "CSV / TSV", "sample_sheet + cms_labels")
-  ContainerDb(processed_db, "data/processed/", "CSV / JSON", "X/y train+test, gene_names, gene_filter_stats, logs")
-
-  Container_Boundary(b1, "scripts/preprocess.py") {
-    Component(preprocess_script, "preprocess.py", "Python script", "Punt d'entrada: orquestra els 9 passos del preprocessament")
-    Component(preprocessing, "src/preprocessing.py", "Python module", "Bloc 1: neteja segura (passos 1-5) — Split train/test (pas 6) — Bloc 2: transformacions data-dependent (passos 7-8) — Guardar (pas 9)")
-    Component(gdc_utils_pre, "src/gdc_utils.py", "Python module", "repo_root per localitzar fitxers del projecte")
-  }
-
-  Rel(researcher, preprocess_script, "executa")
-  Rel(preprocess_script, preprocessing, "build_matrix, remove_qc, filter_coding, dedup, attach_labels, split, filter_genes, log_transform, save")
-  Rel(preprocess_script, gdc_utils_pre, "repo_root")
-  Rel(preprocessing, raw_db, "llegeix 483 fitxers TSV")
-  Rel(preprocessing, metadata_db, "llegeix sample_sheet i cms_labels")
-  Rel(preprocessing, processed_db, "escriu 7 fitxers CSV/JSON")
-```
-
-#### Stage 3: Entrenament
-
-```mermaid
-C4Component
-  title Components — Stage 3: Entrenament (scripts/train.py)
-
-  Person_Ext(researcher, "Investigador", "Executa l'script")
-
-  ContainerDb_Ext(processed_db, "data/processed/", "CSV", "X_train (296x15625), y_train")
-  ContainerDb(models_db, "data/models/", "joblib / JSON", "3 models entrenats + training_log.json")
-
-  Container_Boundary(b1, "scripts/train.py") {
-    Component(train_script, "train.py", "Python script", "Punt d'entrada: entrena 1, 2 o tots 3 models")
-    Component(models_mod, "src/models.py", "Python module", "LogisticRegression (lbfgs), RandomForest (500 arbres), SVM (kernel lineal). Tots amb seed=42 i class_weight=balanced")
-    Component(gdc_utils_tr, "src/gdc_utils.py", "Python module", "repo_root")
-  }
-
-  Rel(researcher, train_script, "executa")
-  Rel(train_script, models_mod, "train_logistic_regression, train_random_forest, train_svm")
-  Rel(train_script, gdc_utils_tr, "repo_root")
-  Rel(models_mod, processed_db, "llegeix X_train, y_train")
-  Rel(models_mod, models_db, "escriu .joblib + training_log.json")
-```
-
-#### Stage 4: Avaluació
-
-```mermaid
-C4Component
-  title Components — Stage 4: Avaluació (scripts/evaluate.py)
-
-  Person_Ext(researcher, "Investigador", "Executa l'script")
-
-  ContainerDb_Ext(models_db, "data/models/", "joblib", "3 models entrenats")
-  ContainerDb_Ext(processed_db, "data/processed/", "CSV", "X_test (74x15625), y_test")
-  ContainerDb(results_db, "results/ + figures/", "JSON / PNG", "Informe d'avaluació + 5 visualitzacions")
-
-  Container_Boundary(b1, "scripts/evaluate.py") {
-    Component(eval_script, "evaluate.py", "Python script", "Punt d'entrada: avalua tots els models en el test set")
-    Component(evaluation, "src/evaluation.py", "Python module", "Mètriques (accuracy, F1-macro, F1-weighted, per classe), confusion matrices, gràfics comparatius, benchmark table")
-    Component(models_mod_ev, "src/models.py", "Python module", "load_processed_data per carregar X_test, y_test")
-    Component(gdc_utils_ev, "src/gdc_utils.py", "Python module", "repo_root")
-  }
-
-  Rel(researcher, eval_script, "executa")
-  Rel(eval_script, evaluation, "evaluate_model, plot_confusion_matrix, plot_metrics_comparison, plot_f1_per_class, build_benchmark_table, save_evaluation_report")
-  Rel(eval_script, models_mod_ev, "load_processed_data")
-  Rel(eval_script, gdc_utils_ev, "repo_root")
-  Rel(evaluation, models_db, "carrega 3 models .joblib")
-  Rel(evaluation, processed_db, "llegeix X_test, y_test")
-  Rel(evaluation, results_db, "escriu evaluation_report.json + 5 PNG")
-```
+El pipeline està dissenyat com una seqüència modular. Cada etapa té un script executable, un o més mòduls reutilitzables i una sortida clara. Aquesta estructura facilita entendre el projecte, executar-lo per parts i reproduir els resultats finals.
