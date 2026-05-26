@@ -1,14 +1,13 @@
 # Execució
 
-Aquesta pàgina descriu com preparar l’entorn i executar el projecte. El pipeline està pensat per executar-se des de l’arrel del repositori i es divideix en quatre scripts principals: descàrrega, preprocessament, entrenament i avaluació.
+Aquesta pàgina descriu com preparar l’entorn Conda i executar el projecte. El pipeline està pensat per executar-se des de l’arrel del repositori i es divideix en quatre scripts principals: descàrrega, preprocessament, entrenament i avaluació.
 
 ## Requisits previs
 
 Abans de començar cal tenir instal·lat:
 
 - Git.
-- Conda o un entorn Python equivalent.
-- Python compatible amb les dependències definides al projecte.
+- Conda, mitjançant Anaconda o Miniconda.
 - Connexió a internet per descarregar els fitxers del GDC.
 - Espai suficient en disc per guardar les dades RNA-seq descarregades.
 
@@ -23,7 +22,7 @@ cd tcga-coad-cms-ml-pipeline
 
 ## Instal·lació amb Conda
 
-Aquesta és l’opció recomanada si el repositori inclou el fitxer `environment.yml`.
+L’entorn del projecte es crea amb Conda a partir del fitxer `environment.yml`.
 
 ### Linux, macOS o Windows amb Anaconda Prompt
 
@@ -35,35 +34,9 @@ pip install -e .
 
 La instal·lació editable (`pip install -e .`) permet importar els mòduls de `src/` des dels scripts i notebooks sense reinstal·lar el paquet cada vegada que es modifica el codi.
 
-## Instal·lació alternativa amb `venv`
-
-Aquesta opció és útil si no es vol utilitzar Conda. Només és aplicable si el repositori inclou `requirements.txt`.
-
-### Linux/macOS
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
-```
-
-### Windows PowerShell
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-pip install -e .
-```
-
-Si PowerShell bloqueja l’activació de l’entorn, es pot executar temporalment:
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
 ## Verificar la instal·lació
+
+Es pot comprovar que les dependències principals s’han instal·lat correctament amb la comanda següent:
 
 ```bash
 python -c "import numpy, pandas, sklearn, matplotlib; print('Imports correctes')"
@@ -169,13 +142,21 @@ python scripts/evaluate.py \
 
 ## Execució dels notebooks
 
-L’exploració de dades es fa amb notebooks i no modifica els fitxers utilitzats pels models.
+Els notebooks complementen l’execució del pipeline i permeten revisar l’exploració de dades, l’anàlisi dels models i els resultats finals.
 
 ```bash
 jupyter lab notebooks/data_exploration.ipynb
 ```
 
-El notebook utilitza les dades processades i pot generar figures exploratòries a `figures/`.
+```bash
+jupyter lab notebooks/model_analysis.ipynb
+```
+
+```bash
+jupyter lab notebooks/results_exploration.ipynb
+```
+
+L’ordre recomanat és executar primer `data_exploration.ipynb` després del preprocessament, `model_analysis.ipynb` després de l’entrenament i `results_exploration.ipynb` després de l’avaluació.
 
 ## Errors comuns
 
@@ -187,18 +168,3 @@ El notebook utilitza les dades processades i pot generar figures exploratòries 
 | No existeix `data/models/` | Encara no s’han entrenat els models | Executar `python scripts/train.py` |
 | `evaluate.py` no troba models | Ruta de models incorrecta o models no generats | Revisar `--models-dir` o tornar a entrenar |
 | Canvien les mètriques | Seed, dades o versions diferents | Revisar `environment.yml`, `random_seed` i manifests |
-
-## Comprovar que l’execució és correcta
-
-Una execució correcta ha de produir, com a mínim:
-
-```text
-data/raw/gdc/                 # fitxers descarregats
-data/processed/X_train.csv
-data/processed/X_test.csv
-data/processed/y_train.csv
-data/processed/y_test.csv
-data/models/*.joblib
-results/evaluation_report.json
-figures/*.png
-```

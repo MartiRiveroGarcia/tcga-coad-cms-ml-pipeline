@@ -109,11 +109,11 @@ La mètrica principal és **F1 macro**, perquè dona el mateix pes a tots els su
 
 | Model | Accuracy | F1 macro | F1 weighted | F1 CMS1 | F1 CMS2 | F1 CMS3 | F1 CMS4 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Logistic Regression | 0.8378 | 0.7920 | 0.8305 | 0.8571 | 0.9032 | 0.5455 | 0.8421 |
-| Random Forest | 0.8243 | 0.7745 | 0.8142 | 0.8000 | 0.8966 | 0.5333 | 0.8649 |
-| SVM lineal | 0.8378 | 0.7920 | 0.8305 | 0.8571 | 0.9032 | 0.5455 | 0.8421 |
+| Logistic Regression | 0.959459 | 0.954033 | 0.959442 | 0.9333 | 0.9831 | 0.9524 | 0.9474 |
+| Random Forest | 0.851351 | 0.824548 | 0.843806 | 0.8667 | 0.8923 | 0.7059 | 0.8333 |
+| SVM lineal | 0.959459 | 0.954033 | 0.959442 | 0.9333 | 0.9831 | 0.9524 | 0.9474 |
 
-Segons aquests resultats, Logistic Regression i SVM lineal obtenen el mateix rendiment global en accuracy i F1 macro. Random Forest queda lleugerament per sota en F1 macro, però manté un rendiment similar.
+Segons aquests resultats, Logistic Regression i SVM lineal obtenen el mateix rendiment global en accuracy, F1 macro i F1 weighted. Random Forest queda per sota en totes les mètriques globals, especialment en F1 macro.
 
 ## Figures generades
 
@@ -132,7 +132,7 @@ figures/
 
 Les matrius de confusió permeten veure quins subtipus es classifiquen correctament i quins es confonen entre si. La diagonal representa encerts i les cel·les fora de la diagonal representen errors.
 
-La interpretació principal és que CMS3 és el subtipus més difícil de classificar. Això és coherent amb el fet que és la classe menys representada en el dataset.
+La interpretació principal és que Logistic Regression i SVM classifiquen correctament la majoria de mostres del conjunt de test. En canvi, Random Forest mostra més dificultats, especialment en CMS3, on obté un recall de 0.5455.
 
 ### Comparació de mètriques
 
@@ -140,14 +140,11 @@ El gràfic `metrics_comparison.png` resumeix el rendiment global dels models. El
 
 ## Interpretació tècnica
 
-Els tres models obtenen resultats similars perquè treballen amb una matriu d’alta dimensionalitat: hi ha molts més gens que mostres. En aquest context, models lineals com Logistic Regression i SVM poden trobar separadors efectius.
+Logistic Regression i SVM obtenen els millors resultats globals i presenten el mateix rendiment en aquest experiment. Tots dos models aconsegueixen una accuracy de 0.959459 i un F1 macro de 0.954033.
 
-El rendiment inferior en CMS3 s’explica per dos factors:
+Random Forest obté un rendiment inferior. La diferència principal es troba en CMS3, on el model presenta una precision de 1.0000 però un recall de 0.5455. Això indica que, quan Random Forest prediu CMS3, ho fa correctament, però no recupera totes les mostres reals d’aquest subtipus.
 
-1. CMS3 és el subtipus amb menys mostres.
-2. Els seus patrons d’expressió poden solapar-se parcialment amb altres subtipus.
-
-Aquesta limitació no invalida el pipeline, però indica que l’avaluació per classe és imprescindible. Una accuracy alta no és suficient si el model falla en un subtipus minoritari.
+Aquesta limitació no invalida el pipeline, però mostra la importància d’avaluar el rendiment per classe. Una accuracy global pot ocultar diferències rellevants entre subtipus, especialment quan el dataset està desbalancejat.
 
 ## Sortida de l’avaluació
 
@@ -162,14 +159,14 @@ Exemple d’estructura:
 ```json
 {
   "logistic_regression": {
-    "accuracy": 0.8378,
-    "f1_macro": 0.7920,
-    "f1_weighted": 0.8305,
+    "accuracy": 0.959459,
+    "f1_macro": 0.954033,
+    "f1_weighted": 0.959442,
     "per_class": {
-      "CMS1": {"precision": 0.8571, "recall": 0.8571, "f1": 0.8571, "support": 14},
-      "CMS2": {"precision": 0.8750, "recall": 0.9310, "f1": 0.9032, "support": 29},
-      "CMS3": {"precision": 0.7500, "recall": 0.4545, "f1": 0.5455, "support": 11},
-      "CMS4": {"precision": 0.8421, "recall": 0.8421, "f1": 0.8421, "support": 20}
+      "CMS1": {"precision": 0.875, "recall": 1.0, "f1": 0.9333, "support": 14},
+      "CMS2": {"precision": 0.9667, "recall": 1.0, "f1": 0.9831, "support": 29},
+      "CMS3": {"precision": 1.0, "recall": 0.9091, "f1": 0.9524, "support": 11},
+      "CMS4": {"precision": 1.0, "recall": 0.9, "f1": 0.9474, "support": 20}
     }
   }
 }
@@ -177,4 +174,4 @@ Exemple d’estructura:
 
 ## Conclusió dels experiments
 
-El pipeline permet entrenar i avaluar models de classificació CMS de manera homogènia. Logistic Regression i SVM lineal actuen com els models amb millor rendiment global en aquesta configuració, mentre que Random Forest ofereix resultats propers. La principal limitació observada és el rendiment menor en CMS3, associat al desbalanceig i a la dificultat pròpia del subtipus.
+El pipeline permet entrenar i avaluar models de classificació CMS de manera homogènia. Logistic Regression i SVM lineal són els models amb millor rendiment global en aquesta configuració, amb una accuracy de 0.959459 i un F1 macro de 0.954033. Random Forest obté un rendiment inferior, principalment per la seva menor capacitat de recuperar mostres CMS3.

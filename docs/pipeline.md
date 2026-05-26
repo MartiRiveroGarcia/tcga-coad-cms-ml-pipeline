@@ -1,12 +1,14 @@
 # Dades i pipeline
 
-Aquesta pàgina descriu l’origen de les dades, l’estructura del repositori i el funcionament intern del pipeline. També inclou els diagrames C4 que expliquen el sistema en diferents nivells de detall.
+Aquesta pàgina descriu l’origen de les dades, l’estructura del repositori i el funcionament intern del pipeline. També inclou els diagrames C4 que representen el sistema en diferents nivells de detall.
 
 ## Origen de les dades
 
-El projecte utilitza dades d’expressió gènica RNA-seq de la cohort TCGA-COAD. Els fitxers provenen del Genomic Data Commons i es descarreguen mitjançant un manifest versionat dins de `data/metadata/`.
+El projecte utilitza dades d’expressió gènica RNA-seq de la cohort TCGA-COAD. Els fitxers provenen del Genomic Data Commons i es descarreguen mitjançant un manifest guardat dins de `data/metadata/`.
 
 El pipeline no treballa amb fitxers FASTQ ni fa alineament de seqüències. Parteix de fitxers STAR-Counts ja quantificats, que contenen comptatges d’expressió gènica per mostra.
+
+Les etiquetes CMS provenen de recursos externs associats a Synapse i es conserven dins de `data/metadata/`. Durant el preprocessament, aquestes etiquetes s’uneixen amb les mostres RNA-seq per construir el conjunt de dades final.
 
 | Element | Valor |
 |---|---|
@@ -15,11 +17,11 @@ El pipeline no treballa amb fitxers FASTQ ni fa alineament de seqüències. Part
 | Workflow | STAR-Counts |
 | Tipus de mostra | Tumor primari |
 | Accés | Dades públiques del GDC |
-| Etiquetes | Subtipus CMS provinents de metadades externes |
+| Etiquetes | Subtipus CMS provinents de Synapse i guardats a `data/metadata/` |
 
 ## Què es versiona i què no?
 
-El repositori només versiona fitxers petits o necessaris per reconstruir el projecte. Les dades grans i els artefactes regenerables queden exclosos del control de versions.
+El repositori només versiona fitxers petits o necessaris per reconstruir el projecte. Les dades grans, els models entrenats i els resultats regenerables queden exclosos del control de versions.
 
 | Ruta | Contingut | Es versiona? | Motiu |
 |---|---|---|---|
@@ -28,7 +30,8 @@ El repositori només versiona fitxers petits o necessaris per reconstruir el pro
 | `data/processed/` | Matrius processades | No | Es generen amb `preprocess.py` |
 | `data/models/` | Models entrenats | No | Es generen amb `train.py` |
 | `results/` | Informes d’avaluació | No | Es generen amb `evaluate.py` |
-| `figures/` | Figures finals i gràfics | Depèn del criteri del projecte | Poden servir per documentar resultats |
+| `figures/` | Figures i gràfics generats | No | Es generen amb els notebooks o amb `evaluate.py` |
+| `docs/assets/diagrames/` | Diagrames utilitzats per la documentació | Sí | Són necessaris per visualitzar correctament la documentació |
 
 ## Estructura del repositori
 
@@ -50,7 +53,7 @@ tcga-coad-cms-ml-pipeline/
 └── README.md
 ```
 
-La separació entre `scripts/` i `src/` és una decisió arquitectònica important. Els scripts actuen com a punts d’entrada executables i orquestren cada etapa. Els mòduls de `src/` contenen la lògica reutilitzable que pot ser cridada per scripts, notebooks o tests.
+La separació entre `scripts/` i `src/` permet diferenciar els punts d’entrada executables de la lògica reutilitzable. Els scripts orquestren cada etapa del pipeline, mentre que els mòduls de `src/` contenen les funcions que poden ser cridades des dels scripts o des dels notebooks.
 
 ## Visió general del pipeline
 
@@ -69,22 +72,22 @@ L’exploració amb notebooks no es considera una etapa productiva del pipeline.
 
 | Etapa | Entrada | Procés | Sortida |
 |---|---|---|---|
-| Descàrrega | Manifest GDC a `data/metadata/` | Instal·la o localitza `gdc-client` i descarrega els fitxers | Fitxers RNA-seq a `data/raw/gdc/` |
-| Preprocessament | Fitxers raw i metadades | Construeix matriu, filtra, uneix etiquetes, separa train/test i transforma | `X_train`, `X_test`, `y_train`, `y_test` i logs |
-| Entrenament | Dades processades de train | Entrena Logistic Regression, Random Forest i SVM | Models `.joblib` i `training_log.json` |
-| Avaluació | Models entrenats i dades de test | Calcula mètriques i figures | `evaluation_report.json` i gràfics |
+| Descàrrega | Manifest GDC a `data/metadata/` | Localitza o instal·la `gdc-client` i descarrega els fitxers RNA-seq del GDC | Fitxers RNA-seq a `data/raw/gdc/` |
+| Preprocessament | Fitxers raw, metadades i etiquetes CMS | Construeix la matriu, filtra dades, uneix etiquetes CMS, separa train/test i transforma valors | `X_train`, `X_test`, `y_train`, `y_test` i logs a `data/processed/` |
+| Entrenament | Dades processades de train | Entrena Logistic Regression, Random Forest i SVM | Models `.joblib` i `training_log.json` a `data/models/` |
+| Avaluació | Models entrenats i dades de test | Calcula mètriques, matrius de confusió i gràfics | Informe a `results/` i figures generades a `figures/` |
 
 ## Arquitectura C4
 
-El model C4 permet documentar arquitectura amb diferents nivells de zoom. En aquesta documentació s’utilitzen tres nivells: context, contenidors i components. El nivell de context mostra el sistema i els actors externs; el nivell de contenidors mostra les parts principals del sistema; i el nivell de components mostra l’estructura interna de cada etapa.
+El model C4 s’utilitza per representar el projecte en tres nivells: context, contenidors i components. El nivell de context mostra el sistema i els elements externs; el nivell de contenidors mostra les parts principals del projecte; i el nivell de components mostra l’estructura interna de cada etapa del pipeline.
 
 ### Nivell 1: context del sistema
 
 ![Diagrama C4 de context](assets/diagrames/c4-context.png)
 
-El diagrama de context mostra el pipeline com un sistema de software complet. L’actor principal és l’investigador o investigadora, que executa el pipeline i consulta la documentació.
+El diagrama de context representa el pipeline com un sistema de software complet. L’actor principal és l’investigador o investigadora, que executa el pipeline per classificar mostres RNA-seq de càncer colorectal en subtipus CMS.
 
-El sistema interactua amb tres elements externs:
+El sistema es relaciona amb tres elements externs. El Genomic Data Commons proporciona els fitxers RNA-seq i les metadades de descàrrega. Synapse proporciona recursos externs relacionats amb les etiquetes CMS. GitHub Pages publica la documentació tècnica del projecte.
 
 | Element extern | Funció dins del projecte |
 |---|---|
@@ -92,27 +95,22 @@ El sistema interactua amb tres elements externs:
 | Synapse | Proporciona recursos externs relacionats amb les etiquetes CMS |
 | GitHub Pages | Publica la documentació tècnica generada amb MkDocs |
 
-Aquest nivell respon a la pregunta: **qui utilitza el sistema i amb quines fonts externes es relaciona?**
-
 ### Nivell 2: contenidors
 
 ![Diagrama C4 de contenidors](assets/diagrames/c4-containers.png)
 
 El diagrama de contenidors amplia el sistema i mostra les parts principals del projecte. Dins del pipeline apareixen quatre etapes productives: obtenció de dades, preprocessament, entrenament i avaluació.
 
-També s’hi mostra la documentació com un bloc separat. Aquesta documentació es construeix amb MkDocs i es publica a GitHub Pages. Els notebooks apareixen com a suport tècnic per entendre decisions, paràmetres i resultats, però no substitueixen els scripts del pipeline.
+També s’hi mostra la documentació com un bloc separat. Els notebooks documenten el procés d’exploració, l’anàlisi dels models i la interpretació dels resultats. La documentació tècnica es construeix amb MkDocs i es publica a GitHub Pages.
 
 La lectura del diagrama és la següent:
 
 1. L’investigador o investigadora executa les etapes del pipeline.
-2. La primera etapa obté dades del GDC.
-3. Les metadades i etiquetes externes es guarden a `data/metadata/`.
-4. El preprocessament genera dades netes a `data/processed/`.
-5. L’entrenament genera models a `data/models/`.
-6. L’avaluació genera resultats i figures.
-7. La documentació explica el procés i es publica a GitHub Pages.
-
-Aquest nivell respon a la pregunta: **quines parts formen el sistema i com flueixen les dades?**
+2. La primera etapa obté dades del GDC a partir de les metadades que es troben a `data/metadata/`.
+3. El preprocessament etiqueta les dades usant la informació procedent de Synapse i genera dades netes a `data/processed/`.
+4. L’entrenament genera models a `data/models/`.
+5. L’avaluació genera resultats i figures.
+6. La documentació en format notebooks explica el procés, i la documentació tècnica es publica a GitHub Pages.
 
 ## Components de cada etapa
 
@@ -120,7 +118,7 @@ Aquest nivell respon a la pregunta: **quines parts formen el sistema i com fluei
 
 ![Components de l’etapa d’obtenció de dades](assets/diagrames/c4-components-download.png)
 
-L’etapa d’obtenció de dades té com a punt d’entrada `scripts/download.py`. Aquest script no concentra tota la lògica, sinó que delega les funcions reutilitzables a `src/gdc_utils.py`.
+L’etapa d’obtenció de dades té com a punt d’entrada `scripts/download.py`. Aquest script crida les funcions de `src/gdc_utils.py`, que s’encarreguen de localitzar o descarregar l’eina `gdc-client`, llegir el manifest i executar la descàrrega massiva de fitxers.
 
 | Component | Responsabilitat |
 |---|---|
@@ -138,25 +136,25 @@ scripts/download.py
         ▼
 src/gdc_utils.py
         │
-        ├── llegeix manifest a data/metadata/
+        ├── llegeix el manifest a data/metadata/
         ├── comprova o descarrega gdc-client
         └── desa els fitxers a data/raw/gdc/
 ```
-
-Aquesta separació facilita la reutilització del codi. Si en el futur cal canviar la manera de descarregar dades, el canvi es pot concentrar a `src/gdc_utils.py`.
 
 ### Etapa 2: preprocessament
 
 ![Components de l’etapa de preprocessament](assets/diagrames/c4-components-preprocess.png)
 
-L’etapa de preprocessament transforma els fitxers RNA-seq descarregats en una matriu apta per entrenar models. El punt d’entrada és `scripts/preprocess.py`, mentre que la lògica principal viu a `src/preprocessing.py`.
+L’etapa de preprocessament transforma els fitxers RNA-seq descarregats en una matriu preparada per entrenar models. El punt d’entrada és `scripts/preprocess.py`, mentre que la lògica principal es troba a `src/preprocessing.py`.
+
+Aquesta etapa també incorpora les etiquetes CMS procedents de Synapse i guardades a `data/metadata/`. El resultat és un conjunt de dades net, etiquetat i separat en train/test.
 
 | Component | Responsabilitat |
 |---|---|
 | `scripts/preprocess.py` | Orquestra el preprocessament |
-| `src/preprocessing.py` | Implementa neteja, filtratge, split i transformació |
+| `src/preprocessing.py` | Implementa neteja, filtratge, unió amb etiquetes, split i transformació |
 | `data/raw/gdc/` | Entrada amb fitxers RNA-seq descarregats |
-| `data/metadata/` | Entrada amb metadades i etiquetes |
+| `data/metadata/` | Entrada amb metadades i etiquetes CMS |
 | `data/processed/` | Sortida amb matrius i logs processats |
 
 El preprocessament s’organitza en dos blocs:
@@ -176,7 +174,7 @@ Bloc 2: transformacions després del split
   └── aplicar log2(x + 1)
 ```
 
-La separació abans i després del split evita que el conjunt de test influeixi en decisions de preprocessament que haurien de calcular-se només amb les dades d’entrenament.
+La separació abans i després del split evita que el conjunt de test influeixi en decisions de preprocessament que s’han de calcular només amb les dades d’entrenament.
 
 ### Etapa 3: entrenament
 
@@ -203,7 +201,7 @@ Tots els models reben la mateixa matriu d’entrenament i les mateixes etiquetes
 
 ![Components de l’etapa d’avaluació](assets/diagrames/c4-components-evaluate.png)
 
-L’etapa d’avaluació carrega els models entrenats i les dades de test. El punt d’entrada és `scripts/evaluate.py`. Les funcions de càlcul de mètriques i generació de figures es troben a `src/evaluation.py`.
+L’etapa d’avaluació carrega els models entrenats i les dades de test. El punt d’entrada és `scripts/evaluate.py`. Les funcions de càlcul de mètriques, matrius de confusió i gràfics es troben a `src/evaluation.py`.
 
 | Component | Responsabilitat |
 |---|---|
@@ -215,49 +213,4 @@ L’etapa d’avaluació carrega els models entrenats i les dades de test. El pu
 | `results/` | Sortida amb informes numèrics |
 | `figures/` | Sortida amb figures d’avaluació |
 
-Aquesta etapa no entrena cap model. Només avalua models ja generats sobre dades que no s’han utilitzat durant l’entrenament.
-
-## Flux de fitxers
-
-```text
-data/metadata/
-   │
-   ▼
-scripts/download.py
-   │
-   ▼
-data/raw/gdc/
-   │
-   ▼
-scripts/preprocess.py
-   │
-   ▼
-data/processed/
-   │
-   ▼
-scripts/train.py
-   │
-   ▼
-data/models/
-   │
-   ▼
-scripts/evaluate.py
-   │
-   ├── results/evaluation_report.json
-   └── figures/*.png
-```
-
-## Decisions tècniques principals
-
-| Decisió | Justificació |
-|---|---|
-| Separar `scripts/` i `src/` | Manté punts d’entrada simples i lògica reutilitzable |
-| No versionar dades raw | Evita pujar fitxers grans i regenerables |
-| Guardar manifests | Permet reconstruir el mateix dataset |
-| Fer split abans de transformacions dependents de dades | Redueix el risc de data leakage |
-| Entrenar tots els models amb el mateix split | Permet una comparació justa |
-| Guardar logs i artefactes | Facilita auditoria i reproducció |
-
-## Resum
-
-El pipeline està dissenyat com una seqüència modular. Cada etapa té un script executable, un o més mòduls reutilitzables i una sortida clara. Aquesta estructura facilita entendre el projecte, executar-lo per parts i reproduir els resultats finals.
+Les sortides principals són l’informe d’avaluació a `results/` i les figures generades a `figures/`.

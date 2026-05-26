@@ -38,24 +38,8 @@ La documentació s’organitza en quatre pàgines principals:
 
 ## Flux resumit
 
-```text
-Dades RNA-seq i etiquetes CMS
-        │
-        ▼
-scripts/download.py
-        │
-        ▼
-scripts/preprocess.py
-        │
-        ▼
-scripts/train.py
-        │
-        ▼
-scripts/evaluate.py
-        │
-        ▼
-Mètriques, figures i benchmark comparatiu
-```
+![Diagrama C4 del pipeline](assets/diagrames/Diagrams-TFG_pipeline.png)
+
 
 ## Què queda fora de l’abast?
 
