@@ -35,7 +35,7 @@ RANDOM_SEED: int = 42
 
 # LogisticRegression hyperparameters
 LR_MAX_ITER: int = 5000       # default 100 fails to converge on 15k features
-LR_SOLVER: str = "lbfgs"      # multinomial by default for multi-class in sklearn >= 1.5
+LR_SOLVER: str = "liblinear"  # pure-C solver, deterministic across platforms (lbfgs uses BLAS)
 
 # RandomForestClassifier hyperparameters
 RF_N_ESTIMATORS: int = 500
@@ -101,9 +101,13 @@ def train_logistic_regression(
     y_train: pd.Series,
     class_weight: str | None = CLASS_WEIGHT,
 ) -> LogisticRegression:
-    """Fit a multinomial Logistic Regression classifier.
+    """Fit a Logistic Regression classifier with one-vs-rest strategy.
 
-    Uses the lbfgs solver with L2 regularisation and class balancing.
+    Uses the liblinear solver with L2 regularisation and class balancing.
+    liblinear is a pure-C implementation that does not delegate to BLAS,
+    making results deterministic across platforms (Linux and Windows).
+    lbfgs was discarded because it relies on BLAS floating-point routines
+    whose accumulation order differs between OpenBLAS and MKL.
     max_iter is set to 5000 because the default (100) rarely converges
     on datasets with thousands of features.
 
