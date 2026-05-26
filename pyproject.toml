@@ -2,8 +2,9 @@
 name = "tcga-coad-cms-ml-pipeline"
 version = "0.1.0"
 description = "Reproducible ML pipeline for CMS classification of TCGA-COAD colorectal cancer"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
+    

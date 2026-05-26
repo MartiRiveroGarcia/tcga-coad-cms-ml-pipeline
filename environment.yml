@@ -9,6 +9,7 @@ dependencies:
   - pandas
   # ML
   - scikit-learn
+  - scipy
   # Visualization
   - matplotlib
   - seaborn

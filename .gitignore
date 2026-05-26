@@ -6,8 +6,9 @@ data/raw/
 data/processed/
 data/models/
 
-# Evaluation results (regenerable from models + test data)
+# Evaluation results and figures (regenerable)
 results/
+figures/
 
 # Python
 __pycache__/
@@ -16,6 +17,8 @@ __pycache__/
 dist/
 build/
 .eggs/
+.pytest_cache/
+.mypy_cache/
 
 # Jupyter
 .ipynb_checkpoints/
