@@ -66,7 +66,7 @@ Els models entrenats són:
 
 | Model | Configuració principal | Justificació |
 |---|---|---|
-| Logistic Regression | `solver='lbfgs'`, `max_iter=5000`, `class_weight='balanced'` | Baseline lineal i interpretable |
+| Logistic Regression | `solver='saga'`, `max_iter=5000`, `class_weight='balanced'` | Baseline lineal i interpretable |
 | Random Forest | `n_estimators=500`, `max_features='sqrt'`, `class_weight='balanced'` | Model robust i capaç de capturar relacions no lineals |
 | SVM lineal | `kernel='linear'`, `class_weight='balanced'` | Adequat quan hi ha moltes més variables que mostres |
 
@@ -109,11 +109,11 @@ La mètrica principal és **F1 macro**, perquè dona el mateix pes a tots els su
 
 | Model | Accuracy | F1 macro | F1 weighted | F1 CMS1 | F1 CMS2 | F1 CMS3 | F1 CMS4 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Logistic Regression | 0.959459 | 0.954033 | 0.959442 | 0.9333 | 0.9831 | 0.9524 | 0.9474 |
+| Logistic Regression | 0.945946 | 0.942825 | 0.945332 | 0.9333 | 0.9667 | 0.9524 | 0.9189 |
 | Random Forest | 0.851351 | 0.824548 | 0.843806 | 0.8667 | 0.8923 | 0.7059 | 0.8333 |
 | SVM lineal | 0.959459 | 0.954033 | 0.959442 | 0.9333 | 0.9831 | 0.9524 | 0.9474 |
 
-Segons aquests resultats, Logistic Regression i SVM lineal obtenen el mateix rendiment global en accuracy, F1 macro i F1 weighted. Random Forest queda per sota en totes les mètriques globals, especialment en F1 macro.
+SVM lineal obté el millor rendiment global del benchmark. La regressió logística presenta resultats elevats però lleugerament inferiors en accuracy, F1 macro i F1 weighted. Random Forest queda per sota en totes les mètriques globals, especialment en F1 macro.
 
 ## Figures generades
 
@@ -140,7 +140,7 @@ El gràfic `metrics_comparison.png` resumeix el rendiment global dels models. El
 
 ## Interpretació tècnica
 
-Logistic Regression i SVM obtenen els millors resultats globals i presenten el mateix rendiment en aquest experiment. Tots dos models aconsegueixen una accuracy de 0.959459 i un F1 macro de 0.954033.
+SVM lineal obté el millor rendiment global del benchmark, amb una accuracy de 0.959459 i un F1 macro de 0.954033. La regressió logística manté un rendiment elevat (accuracy 0.945946, F1 macro 0.942825), però la diferència entre els dos models és mesurable i no presenta una equivalència exacta de mètriques.
 
 Random Forest obté un rendiment inferior. La diferència principal es troba en CMS3, on el model presenta una precision de 1.0000 però un recall de 0.5455. Això indica que, quan Random Forest prediu CMS3, ho fa correctament, però no recupera totes les mostres reals d’aquest subtipus.
 
@@ -159,14 +159,14 @@ Exemple d’estructura:
 ```json
 {
   "logistic_regression": {
-    "accuracy": 0.959459,
-    "f1_macro": 0.954033,
-    "f1_weighted": 0.959442,
+    "accuracy": 0.945946,
+    "f1_macro": 0.942825,
+    "f1_weighted": 0.945332,
     "per_class": {
       "CMS1": {"precision": 0.875, "recall": 1.0, "f1": 0.9333, "support": 14},
-      "CMS2": {"precision": 0.9667, "recall": 1.0, "f1": 0.9831, "support": 29},
+      "CMS2": {"precision": 0.9355, "recall": 1.0, "f1": 0.9667, "support": 29},
       "CMS3": {"precision": 1.0, "recall": 0.9091, "f1": 0.9524, "support": 11},
-      "CMS4": {"precision": 1.0, "recall": 0.9, "f1": 0.9474, "support": 20}
+      "CMS4": {"precision": 1.0, "recall": 0.85, "f1": 0.9189, "support": 20}
     }
   }
 }
@@ -174,4 +174,4 @@ Exemple d’estructura:
 
 ## Conclusió dels experiments
 
-El pipeline permet entrenar i avaluar models de classificació CMS de manera homogènia. Logistic Regression i SVM lineal són els models amb millor rendiment global en aquesta configuració, amb una accuracy de 0.959459 i un F1 macro de 0.954033. Random Forest obté un rendiment inferior, principalment per la seva menor capacitat de recuperar mostres CMS3.
+El pipeline permet entrenar i avaluar models de classificació CMS de manera homogènia. SVM lineal és el model amb millor rendiment global en aquesta configuració, amb una accuracy de 0.959459 i un F1 macro de 0.954033. La regressió logística obté resultats propers però lleugerament inferiors. Random Forest obté un rendiment inferior, principalment per la seva menor capacitat de recuperar mostres CMS3.

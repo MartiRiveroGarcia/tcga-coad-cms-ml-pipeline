@@ -35,7 +35,7 @@ RANDOM_SEED: int = 42
 
 # LogisticRegression hyperparameters
 LR_MAX_ITER: int = 5000       # default 100 fails to converge on 15k features
-LR_SOLVER: str = "liblinear"  # pure-C solver, deterministic across platforms (lbfgs uses BLAS)
+LR_SOLVER: str = "saga"        # Cython solver, random_state-controlled, cross-platform deterministic
 
 # RandomForestClassifier hyperparameters
 RF_N_ESTIMATORS: int = 500
@@ -101,13 +101,15 @@ def train_logistic_regression(
     y_train: pd.Series,
     class_weight: str | None = CLASS_WEIGHT,
 ) -> LogisticRegression:
-    """Fit a Logistic Regression classifier with one-vs-rest strategy.
+    """Fit a Logistic Regression classifier.
 
-    Uses the liblinear solver with L2 regularisation and class balancing.
-    liblinear is a pure-C implementation that does not delegate to BLAS,
-    making results deterministic across platforms (Linux and Windows).
-    lbfgs was discarded because it relies on BLAS floating-point routines
-    whose accumulation order differs between OpenBLAS and MKL.
+    Uses the saga solver with L2 regularisation and class balancing.
+    saga is implemented in sklearn's own Cython code: its randomness is
+    fully controlled by random_state (one sample drawn per update step),
+    and its core arithmetic does not delegate large matrix products to
+    BLAS. lbfgs was discarded because it calls BLAS routines whose
+    floating-point accumulation order differs between OpenBLAS (Linux)
+    and MKL (Windows), producing divergent results despite identical seeds.
     max_iter is set to 5000 because the default (100) rarely converges
     on datasets with thousands of features.
 
