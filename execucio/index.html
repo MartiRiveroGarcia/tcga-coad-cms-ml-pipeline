@@ -1,0 +1,961 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../pipeline/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Execució - TCGA-COAD CMS ML Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#execucio" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-header__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TCGA-COAD CMS ML Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Execució
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-nav__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TCGA-COAD CMS ML Pipeline
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inici
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execució
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execució
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requisits-previs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requisits previs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clonar-el-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clonar el repositori
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installacio-amb-conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instal·lació amb Conda
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instal·lació amb Conda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-macos-o-windows-amb-anaconda-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux, macOS o Windows amb Anaconda Prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verificar-la-installacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificar la instal·lació
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-completa-del-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució completa del pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-per-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució per etapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#descarrega-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descàrrega de dades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrenament
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avaluació
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-dels-notebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució dels notebooks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors-comuns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors comuns
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dades i pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resultats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiments i resultats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproductibilitat i referència
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossari/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossari
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requisits-previs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requisits previs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clonar-el-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clonar el repositori
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installacio-amb-conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instal·lació amb Conda
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instal·lació amb Conda">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-macos-o-windows-amb-anaconda-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux, macOS o Windows amb Anaconda Prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verificar-la-installacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificar la instal·lació
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-completa-del-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució completa del pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-per-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució per etapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#descarrega-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descàrrega de dades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrenament
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avaluació
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execucio-dels-notebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execució dels notebooks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors-comuns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors comuns
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="execucio">Execució</h1>
+<p>Aquesta pàgina descriu com preparar l’entorn Conda i executar el projecte. El pipeline està pensat per executar-se des de l’arrel del repositori i es divideix en quatre scripts principals: descàrrega, preprocessament, entrenament i avaluació.</p>
+<h2 id="requisits-previs">Requisits previs</h2>
+<p>Abans de començar cal tenir instal·lat:</p>
+<ul>
+<li>Git.</li>
+<li>Conda, mitjançant Anaconda o Miniconda.</li>
+<li>Connexió a internet per descarregar els fitxers del GDC.</li>
+<li>Espai suficient en disc per guardar les dades RNA-seq descarregades.</li>
+</ul>
+<p>El repositori no inclou les dades grans. Les dades es reprodueixen a partir dels manifests guardats a <code>data/metadata/</code>.</p>
+<h2 id="clonar-el-repositori">Clonar el repositori</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/martiriverogarcia/tcga-coad-cms-ml-pipeline.git
+<span class="nb">cd</span><span class="w"> </span>tcga-coad-cms-ml-pipeline
+</code></pre></div>
+<h2 id="installacio-amb-conda">Instal·lació amb Conda</h2>
+<p>L’entorn del projecte es crea amb Conda a partir del fitxer <code>environment.yml</code>.</p>
+<h3 id="linux-macos-o-windows-amb-anaconda-prompt">Linux, macOS o Windows amb Anaconda Prompt</h3>
+<div class="highlight"><pre><span></span><code>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+conda<span class="w"> </span>activate<span class="w"> </span>tcga-coad-cms-ml-pipeline
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div>
+<p>La instal·lació editable (<code>pip install -e .</code>) permet importar els mòduls de <code>src/</code> des dels scripts i notebooks sense reinstal·lar el paquet cada vegada que es modifica el codi.</p>
+<h2 id="verificar-la-installacio">Verificar la instal·lació</h2>
+<p>Es pot comprovar que les dependències principals s’han instal·lat correctament amb la comanda següent:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import numpy, pandas, sklearn, matplotlib; print(&#39;Imports correctes&#39;)&quot;</span>
+</code></pre></div>
+<p>També és recomanable comprovar que els scripts són accessibles des de l’arrel del projecte:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/preprocess.py<span class="w"> </span>--help
+python<span class="w"> </span>scripts/train.py<span class="w"> </span>--help
+python<span class="w"> </span>scripts/evaluate.py<span class="w"> </span>--help
+</code></pre></div>
+<h2 id="execucio-completa-del-pipeline">Execució completa del pipeline</h2>
+<p>L’execució completa segueix aquest ordre:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/download.py
+python<span class="w"> </span>scripts/preprocess.py
+python<span class="w"> </span>scripts/train.py
+python<span class="w"> </span>scripts/evaluate.py
+</code></pre></div>
+<p>Cada script genera els fitxers necessaris per a l’etapa següent. Per tant, no es recomana executar <code>train.py</code> abans de <code>preprocess.py</code>, ni <code>evaluate.py</code> abans de <code>train.py</code>.</p>
+<h2 id="execucio-per-etapes">Execució per etapes</h2>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Comanda</th>
+<th>Sortida esperada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Descàrrega</td>
+<td><code>python scripts/download.py</code></td>
+<td>Fitxers RNA-seq a <code>data/raw/gdc/</code></td>
+</tr>
+<tr>
+<td>Preprocessament</td>
+<td><code>python scripts/preprocess.py</code></td>
+<td>Fitxers processats a <code>data/processed/</code></td>
+</tr>
+<tr>
+<td>Entrenament</td>
+<td><code>python scripts/train.py</code></td>
+<td>Models <code>.joblib</code> a <code>data/models/</code></td>
+</tr>
+<tr>
+<td>Avaluació</td>
+<td><code>python scripts/evaluate.py</code></td>
+<td>Informe JSON a <code>results/</code> i figures a <code>figures/</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="descarrega-de-dades">Descàrrega de dades</h2>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/download.py
+</code></pre></div>
+<p>Aquest script llegeix el manifest del GDC guardat a <code>data/metadata/</code>, instal·la l’eina <code>gdc-client</code> si cal i descarrega els fitxers RNA-seq a <code>data/raw/gdc/</code>.</p>
+<p>Opcions útils:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/download.py<span class="w"> </span>--dry-run
+python<span class="w"> </span>scripts/download.py<span class="w"> </span>--manifest<span class="w"> </span>data/metadata/gdc_manifest.2026-03-09.191818.txt
+python<span class="w"> </span>scripts/download.py<span class="w"> </span>--out<span class="w"> </span>data/raw/gdc
+</code></pre></div>
+<h2 id="preprocessament">Preprocessament</h2>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/preprocess.py
+</code></pre></div>
+<p>Aquesta etapa construeix la matriu d’expressió, filtra les mostres i gens, associa les etiquetes CMS, separa train/test i aplica la transformació logarítmica.</p>
+<p>Opcions útils:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/preprocess.py<span class="w"> </span>--dry-run
+python<span class="w"> </span>scripts/preprocess.py<span class="w"> </span>--seed<span class="w"> </span><span class="m">42</span><span class="w"> </span>--test-size<span class="w"> </span><span class="m">0</span>.2
+</code></pre></div>
+<h2 id="entrenament">Entrenament</h2>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/train.py
+</code></pre></div>
+<p>Aquesta etapa entrena els models Logistic Regression, Random Forest i SVM lineal amb les mateixes dades d’entrenament.</p>
+<p>Opcions útils:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/train.py<span class="w"> </span>--dry-run
+python<span class="w"> </span>scripts/train.py<span class="w"> </span>--model<span class="w"> </span>logistic_regression
+python<span class="w"> </span>scripts/train.py<span class="w"> </span>--model<span class="w"> </span>random_forest
+python<span class="w"> </span>scripts/train.py<span class="w"> </span>--model<span class="w"> </span>svm
+python<span class="w"> </span>scripts/train.py<span class="w"> </span>--processed-dir<span class="w"> </span>data/processed<span class="w"> </span>--output-dir<span class="w"> </span>data/models
+</code></pre></div>
+<h2 id="avaluacio">Avaluació</h2>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/evaluate.py
+</code></pre></div>
+<p>Aquesta etapa carrega els models entrenats i els avalua sobre el conjunt de test. Genera mètriques, matrius de confusió i gràfics comparatius.</p>
+<p>Opcions útils:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/evaluate.py<span class="w"> </span>--dry-run
+python<span class="w"> </span>scripts/evaluate.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--processed-dir<span class="w"> </span>data/processed<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--models-dir<span class="w"> </span>data/models<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>results<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--figures-dir<span class="w"> </span>figures
+</code></pre></div>
+<h2 id="execucio-dels-notebooks">Execució dels notebooks</h2>
+<p>Els notebooks complementen l’execució del pipeline i permeten revisar l’exploració de dades, l’anàlisi dels models i els resultats finals.</p>
+<div class="highlight"><pre><span></span><code>jupyter<span class="w"> </span>lab<span class="w"> </span>notebooks/data_exploration.ipynb
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>jupyter<span class="w"> </span>lab<span class="w"> </span>notebooks/model_analysis.ipynb
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>jupyter<span class="w"> </span>lab<span class="w"> </span>notebooks/results_exploration.ipynb
+</code></pre></div>
+<p>L’ordre recomanat és executar primer <code>data_exploration.ipynb</code> després del preprocessament, <code>model_analysis.ipynb</code> després de l’entrenament i <code>results_exploration.ipynb</code> després de l’avaluació.</p>
+<h2 id="errors-comuns">Errors comuns</h2>
+<table>
+<thead>
+<tr>
+<th>Problema</th>
+<th>Possible causa</th>
+<th>Solució</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError: src</code></td>
+<td>El paquet local no està instal·lat</td>
+<td>Executar <code>pip install -e .</code> des de l’arrel del repositori</td>
+</tr>
+<tr>
+<td>No existeix <code>data/raw/gdc/</code></td>
+<td>Encara no s’han descarregat les dades</td>
+<td>Executar <code>python scripts/download.py</code></td>
+</tr>
+<tr>
+<td>No existeix <code>data/processed/</code></td>
+<td>Encara no s’ha fet el preprocessament</td>
+<td>Executar <code>python scripts/preprocess.py</code></td>
+</tr>
+<tr>
+<td>No existeix <code>data/models/</code></td>
+<td>Encara no s’han entrenat els models</td>
+<td>Executar <code>python scripts/train.py</code></td>
+</tr>
+<tr>
+<td><code>evaluate.py</code> no troba models</td>
+<td>Ruta de models incorrecta o models no generats</td>
+<td>Revisar <code>--models-dir</code> o tornar a entrenar</td>
+</tr>
+<tr>
+<td>Canvien les mètriques</td>
+<td>Seed, dades o versions diferents</td>
+<td>Revisar <code>environment.yml</code>, <code>random_seed</code> i manifests</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

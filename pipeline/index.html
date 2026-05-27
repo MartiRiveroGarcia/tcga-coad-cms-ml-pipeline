@@ -1,0 +1,1181 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../execucio/">
+      
+      
+        <link rel="next" href="../resultats/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Dades i pipeline - TCGA-COAD CMS ML Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dades-i-pipeline" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-header__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TCGA-COAD CMS ML Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dades i pipeline
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-nav__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TCGA-COAD CMS ML Pipeline
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inici
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execucio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execució
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dades i pipeline
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dades i pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#origen-de-les-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Origen de les dades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-versiona-i-que-no" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Què es versiona i què no?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del repositori
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visio-general-del-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visió general del pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contracte-de-les-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contracte de les etapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-c4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura C4
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura C4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nivell-1-context-del-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nivell 1: context del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivell-2-contenidors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nivell 2: contenidors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components-de-cada-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components de cada etapa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components de cada etapa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etapa-1-obtencio-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 1: obtenció de dades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-2-preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 2: preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-3-entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 3: entrenament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-4-avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 4: avaluació
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resultats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiments i resultats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproductibilitat i referència
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossari/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossari
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#origen-de-les-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Origen de les dades
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-es-versiona-i-que-no" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Què es versiona i què no?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estructura-del-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura del repositori
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visio-general-del-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visió general del pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contracte-de-les-etapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contracte de les etapes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-c4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura C4
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura C4">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nivell-1-context-del-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nivell 1: context del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nivell-2-contenidors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nivell 2: contenidors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#components-de-cada-etapa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Components de cada etapa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Components de cada etapa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#etapa-1-obtencio-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 1: obtenció de dades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-2-preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 2: preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-3-entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 3: entrenament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-4-avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa 4: avaluació
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dades-i-pipeline">Dades i pipeline</h1>
+<p>Aquesta pàgina descriu l’origen de les dades, l’estructura del repositori i el funcionament intern del pipeline. També inclou els diagrames C4 que representen el sistema en diferents nivells de detall.</p>
+<h2 id="origen-de-les-dades">Origen de les dades</h2>
+<p>El projecte utilitza dades d’expressió gènica RNA-seq de la cohort TCGA-COAD. Els fitxers provenen del Genomic Data Commons i es descarreguen mitjançant un manifest guardat dins de <code>data/metadata/</code>.</p>
+<p>El pipeline no treballa amb fitxers FASTQ ni fa alineament de seqüències. Parteix de fitxers STAR-Counts ja quantificats, que contenen comptatges d’expressió gènica per mostra.</p>
+<p>Les etiquetes CMS provenen de recursos externs associats a Synapse i es conserven dins de <code>data/metadata/</code>. Durant el preprocessament, aquestes etiquetes s’uneixen amb les mostres RNA-seq per construir el conjunt de dades final.</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cohort</td>
+<td>TCGA-COAD</td>
+</tr>
+<tr>
+<td>Tipus de dada</td>
+<td>RNA-seq</td>
+</tr>
+<tr>
+<td>Workflow</td>
+<td>STAR-Counts</td>
+</tr>
+<tr>
+<td>Tipus de mostra</td>
+<td>Tumor primari</td>
+</tr>
+<tr>
+<td>Accés</td>
+<td>Dades públiques del GDC</td>
+</tr>
+<tr>
+<td>Etiquetes</td>
+<td>Subtipus CMS provinents de Synapse i guardats a <code>data/metadata/</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="que-es-versiona-i-que-no">Què es versiona i què no?</h2>
+<p>El repositori només versiona fitxers petits o necessaris per reconstruir el projecte. Les dades grans, els models entrenats i els resultats regenerables queden exclosos del control de versions.</p>
+<table>
+<thead>
+<tr>
+<th>Ruta</th>
+<th>Contingut</th>
+<th>Es versiona?</th>
+<th>Motiu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/metadata/</code></td>
+<td>Manifests, sample sheets i etiquetes CMS</td>
+<td>Sí</td>
+<td>Permeten reconstruir el dataset</td>
+</tr>
+<tr>
+<td><code>data/raw/gdc/</code></td>
+<td>Fitxers RNA-seq descarregats</td>
+<td>No</td>
+<td>Són grans i es poden descarregar de nou</td>
+</tr>
+<tr>
+<td><code>data/processed/</code></td>
+<td>Matrius processades</td>
+<td>No</td>
+<td>Es generen amb <code>preprocess.py</code></td>
+</tr>
+<tr>
+<td><code>data/models/</code></td>
+<td>Models entrenats</td>
+<td>No</td>
+<td>Es generen amb <code>train.py</code></td>
+</tr>
+<tr>
+<td><code>results/</code></td>
+<td>Informes d’avaluació</td>
+<td>No</td>
+<td>Es generen amb <code>evaluate.py</code></td>
+</tr>
+<tr>
+<td><code>figures/</code></td>
+<td>Figures i gràfics generats</td>
+<td>No</td>
+<td>Es generen amb els notebooks o amb <code>evaluate.py</code></td>
+</tr>
+<tr>
+<td><code>docs/assets/diagrames/</code></td>
+<td>Diagrames utilitzats per la documentació</td>
+<td>Sí</td>
+<td>Són necessaris per visualitzar correctament la documentació</td>
+</tr>
+</tbody>
+</table>
+<h2 id="estructura-del-repositori">Estructura del repositori</h2>
+<div class="highlight"><pre><span></span><code>tcga-coad-cms-ml-pipeline/
+├── data/
+│   ├── metadata/       # manifests, sample sheets i etiquetes CMS
+│   ├── raw/gdc/        # fitxers RNA-seq descarregats
+│   ├── processed/      # dades transformades per als models
+│   └── models/         # models entrenats
+├── docs/               # documentació MkDocs
+├── figures/            # figures generades
+├── notebooks/          # exploració i anàlisi interactiva
+├── results/            # mètriques i informes d’avaluació
+├── scripts/            # punts d’entrada executables
+├── src/                # mòduls reutilitzables
+├── tools/              # eines externes, com gdc-client
+├── environment.yml
+└── README.md
+</code></pre></div>
+<p>La separació entre <code>scripts/</code> i <code>src/</code> permet diferenciar els punts d’entrada executables de la lògica reutilitzable. Els scripts orquestren cada etapa del pipeline, mentre que els mòduls de <code>src/</code> contenen les funcions que poden ser cridades des dels scripts o des dels notebooks.</p>
+<h2 id="visio-general-del-pipeline">Visió general del pipeline</h2>
+<p>El pipeline s’executa en quatre etapes productives:</p>
+<div class="highlight"><pre><span></span><code>1. Descàrrega       scripts/download.py      src/gdc_utils.py
+2. Preprocessament  scripts/preprocess.py    src/preprocessing.py
+3. Entrenament      scripts/train.py         src/models.py
+4. Avaluació        scripts/evaluate.py      src/evaluation.py
+</code></pre></div>
+<p>L’exploració amb notebooks no es considera una etapa productiva del pipeline. És una etapa d’anàlisi que ajuda a validar les dades i interpretar resultats, però no modifica els fitxers que entren als models.</p>
+<h2 id="contracte-de-les-etapes">Contracte de les etapes</h2>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Entrada</th>
+<th>Procés</th>
+<th>Sortida</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Descàrrega</td>
+<td>Manifest GDC a <code>data/metadata/</code></td>
+<td>Localitza o instal·la <code>gdc-client</code> i descarrega els fitxers RNA-seq del GDC</td>
+<td>Fitxers RNA-seq a <code>data/raw/gdc/</code></td>
+</tr>
+<tr>
+<td>Preprocessament</td>
+<td>Fitxers raw, metadades i etiquetes CMS</td>
+<td>Construeix la matriu, filtra dades, uneix etiquetes CMS, separa train/test i transforma valors</td>
+<td><code>X_train</code>, <code>X_test</code>, <code>y_train</code>, <code>y_test</code> i logs a <code>data/processed/</code></td>
+</tr>
+<tr>
+<td>Entrenament</td>
+<td>Dades processades de train</td>
+<td>Entrena Logistic Regression, Random Forest i SVM</td>
+<td>Models <code>.joblib</code> i <code>training_log.json</code> a <code>data/models/</code></td>
+</tr>
+<tr>
+<td>Avaluació</td>
+<td>Models entrenats i dades de test</td>
+<td>Calcula mètriques, matrius de confusió i gràfics</td>
+<td>Informe a <code>results/</code> i figures generades a <code>figures/</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="arquitectura-c4">Arquitectura C4</h2>
+<p>El model C4 s’utilitza per representar el projecte en tres nivells: context, contenidors i components. El nivell de context mostra el sistema i els elements externs; el nivell de contenidors mostra les parts principals del projecte; i el nivell de components mostra l’estructura interna de cada etapa del pipeline.</p>
+<h3 id="nivell-1-context-del-sistema">Nivell 1: context del sistema</h3>
+<p><img alt="Diagrama C4 de context" src="../assets/diagrames/c4-context.png" /></p>
+<p>El diagrama de context representa el pipeline com un sistema de software complet. L’actor principal és l’investigador o investigadora, que executa el pipeline per classificar mostres RNA-seq de càncer colorectal en subtipus CMS.</p>
+<p>El sistema es relaciona amb tres elements externs. El Genomic Data Commons proporciona els fitxers RNA-seq i les metadades de descàrrega. Synapse proporciona recursos externs relacionats amb les etiquetes CMS. GitHub Pages publica la documentació tècnica del projecte.</p>
+<table>
+<thead>
+<tr>
+<th>Element extern</th>
+<th>Funció dins del projecte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Genomic Data Commons</td>
+<td>Proporciona els fitxers RNA-seq i les metadades de descàrrega</td>
+</tr>
+<tr>
+<td>Synapse</td>
+<td>Proporciona recursos externs relacionats amb les etiquetes CMS</td>
+</tr>
+<tr>
+<td>GitHub Pages</td>
+<td>Publica la documentació tècnica generada amb MkDocs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nivell-2-contenidors">Nivell 2: contenidors</h3>
+<p><img alt="Diagrama C4 de contenidors" src="../assets/diagrames/c4-containers.png" /></p>
+<p>El diagrama de contenidors amplia el sistema i mostra les parts principals del projecte. Dins del pipeline apareixen quatre etapes productives: obtenció de dades, preprocessament, entrenament i avaluació.</p>
+<p>També s’hi mostra la documentació com un bloc separat. Els notebooks documenten el procés d’exploració, l’anàlisi dels models i la interpretació dels resultats. La documentació tècnica es construeix amb MkDocs i es publica a GitHub Pages.</p>
+<p>La lectura del diagrama és la següent:</p>
+<ol>
+<li>L’investigador o investigadora executa les etapes del pipeline.</li>
+<li>La primera etapa obté dades del GDC a partir de les metadades que es troben a <code>data/metadata/</code>.</li>
+<li>El preprocessament etiqueta les dades usant la informació procedent de Synapse i genera dades netes a <code>data/processed/</code>.</li>
+<li>L’entrenament genera models a <code>data/models/</code>.</li>
+<li>L’avaluació genera resultats i figures.</li>
+<li>La documentació en format notebooks explica el procés, i la documentació tècnica es publica a GitHub Pages.</li>
+</ol>
+<h2 id="components-de-cada-etapa">Components de cada etapa</h2>
+<h3 id="etapa-1-obtencio-de-dades">Etapa 1: obtenció de dades</h3>
+<p><img alt="Components de l’etapa d’obtenció de dades" src="../assets/diagrames/c4-components-download.png" /></p>
+<p>L’etapa d’obtenció de dades té com a punt d’entrada <code>scripts/download.py</code>. Aquest script crida les funcions de <code>src/gdc_utils.py</code>, que s’encarreguen de localitzar o descarregar l’eina <code>gdc-client</code>, llegir el manifest i executar la descàrrega massiva de fitxers.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsabilitat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/download.py</code></td>
+<td>Punt d’entrada executable de la descàrrega</td>
+</tr>
+<tr>
+<td><code>src/gdc_utils.py</code></td>
+<td>Funcions per localitzar, descarregar i executar <code>gdc-client</code></td>
+</tr>
+<tr>
+<td><code>tools/gdc-client/</code></td>
+<td>Directori on es guarda l’eina externa de descàrrega</td>
+</tr>
+<tr>
+<td><code>data/metadata/</code></td>
+<td>Directori amb manifests i metadades</td>
+</tr>
+<tr>
+<td><code>data/raw/gdc/</code></td>
+<td>Directori on es guarden els fitxers descarregats</td>
+</tr>
+</tbody>
+</table>
+<p>El flux principal és:</p>
+<div class="highlight"><pre><span></span><code>scripts/download.py
+        │
+        ▼
+src/gdc_utils.py
+        │
+        ├── llegeix el manifest a data/metadata/
+        ├── comprova o descarrega gdc-client
+        └── desa els fitxers a data/raw/gdc/
+</code></pre></div>
+<h3 id="etapa-2-preprocessament">Etapa 2: preprocessament</h3>
+<p><img alt="Components de l’etapa de preprocessament" src="../assets/diagrames/c4-components-preprocess.png" /></p>
+<p>L’etapa de preprocessament transforma els fitxers RNA-seq descarregats en una matriu preparada per entrenar models. El punt d’entrada és <code>scripts/preprocess.py</code>, mentre que la lògica principal es troba a <code>src/preprocessing.py</code>.</p>
+<p>Aquesta etapa també incorpora les etiquetes CMS procedents de Synapse i guardades a <code>data/metadata/</code>. El resultat és un conjunt de dades net, etiquetat i separat en train/test.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsabilitat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/preprocess.py</code></td>
+<td>Orquestra el preprocessament</td>
+</tr>
+<tr>
+<td><code>src/preprocessing.py</code></td>
+<td>Implementa neteja, filtratge, unió amb etiquetes, split i transformació</td>
+</tr>
+<tr>
+<td><code>data/raw/gdc/</code></td>
+<td>Entrada amb fitxers RNA-seq descarregats</td>
+</tr>
+<tr>
+<td><code>data/metadata/</code></td>
+<td>Entrada amb metadades i etiquetes CMS</td>
+</tr>
+<tr>
+<td><code>data/processed/</code></td>
+<td>Sortida amb matrius i logs processats</td>
+</tr>
+</tbody>
+</table>
+<p>El preprocessament s’organitza en dos blocs:</p>
+<div class="highlight"><pre><span></span><code>Bloc 1: neteja segura abans del split
+  ├── construir matriu d’expressió
+  ├── eliminar files QC
+  ├── filtrar gens protein-coding
+  ├── deduplicar mostres
+  └── unir amb etiquetes CMS
+
+Split train/test
+
+Bloc 2: transformacions després del split
+  ├── filtrar gens amb baix comptatge usant només train
+  └── aplicar log2(x + 1)
+</code></pre></div>
+<p>La separació abans i després del split evita que el conjunt de test influeixi en decisions de preprocessament que s’han de calcular només amb les dades d’entrenament.</p>
+<h3 id="etapa-3-entrenament">Etapa 3: entrenament</h3>
+<p><img alt="Components de l’etapa d’entrenament" src="../assets/diagrames/c4-components-train.png" /></p>
+<p>L’etapa d’entrenament carrega les dades processades i entrena els classificadors. El punt d’entrada és <code>scripts/train.py</code> i la lògica dels models es troba a <code>src/models.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsabilitat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/train.py</code></td>
+<td>Punt d’entrada de l’entrenament</td>
+</tr>
+<tr>
+<td><code>src/models.py</code></td>
+<td>Funcions de càrrega de dades i entrenament dels models</td>
+</tr>
+<tr>
+<td><code>data/processed/</code></td>
+<td>Entrada amb <code>X_train</code> i <code>y_train</code></td>
+</tr>
+<tr>
+<td><code>data/models/</code></td>
+<td>Sortida amb models entrenats</td>
+</tr>
+</tbody>
+</table>
+<p>Els models entrenats són:</p>
+<ul>
+<li>Logistic Regression.</li>
+<li>Random Forest.</li>
+<li>SVM amb kernel lineal.</li>
+</ul>
+<p>Tots els models reben la mateixa matriu d’entrenament i les mateixes etiquetes. Això permet comparar-los en condicions homogènies.</p>
+<h3 id="etapa-4-avaluacio">Etapa 4: avaluació</h3>
+<p><img alt="Components de l’etapa d’avaluació" src="../assets/diagrames/c4-components-evaluate.png" /></p>
+<p>L’etapa d’avaluació carrega els models entrenats i les dades de test. El punt d’entrada és <code>scripts/evaluate.py</code>. Les funcions de càlcul de mètriques, matrius de confusió i gràfics es troben a <code>src/evaluation.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsabilitat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/evaluate.py</code></td>
+<td>Punt d’entrada de l’avaluació</td>
+</tr>
+<tr>
+<td><code>src/evaluation.py</code></td>
+<td>Càlcul de mètriques, matrius de confusió i gràfics</td>
+</tr>
+<tr>
+<td><code>src/models.py</code></td>
+<td>Funcions de càrrega de dades o models quan cal</td>
+</tr>
+<tr>
+<td><code>data/models/</code></td>
+<td>Entrada amb models entrenats</td>
+</tr>
+<tr>
+<td><code>data/processed/</code></td>
+<td>Entrada amb <code>X_test</code> i <code>y_test</code></td>
+</tr>
+<tr>
+<td><code>results/</code></td>
+<td>Sortida amb informes numèrics</td>
+</tr>
+<tr>
+<td><code>figures/</code></td>
+<td>Sortida amb figures d’avaluació</td>
+</tr>
+</tbody>
+</table>
+<p>Les sortides principals són l’informe d’avaluació a <code>results/</code> i les figures generades a <code>figures/</code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

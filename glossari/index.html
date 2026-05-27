@@ -1,0 +1,3006 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../referencia/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Glossari - TCGA-COAD CMS ML Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#glossari" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-header__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TCGA-COAD CMS ML Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Glossari
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TCGA-COAD CMS ML Pipeline" class="md-nav__button md-logo" aria-label="TCGA-COAD CMS ML Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    TCGA-COAD CMS ML Pipeline
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inici
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execucio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Execució
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dades i pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resultats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Experiments i resultats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reproductibilitat i referència
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossari
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossari
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bioinformatica-i-dades-genomiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bioinformàtica i dades genòmiques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bioinformàtica i dades genòmiques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rna-seq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RNA-seq
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressio-genica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressió gènica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matriu-dexpressio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriu d’expressió
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gen-protein-coding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gen protein-coding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comptatge-genic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comptatge gènic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#star-counts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STAR-Counts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FASTQ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alineament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alineament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalització
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformacio-logaritmica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformació logarítmica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch effect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cancer-colorectal-i-subtipus-cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Càncer colorectal i subtipus CMS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Càncer colorectal i subtipus CMS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancer-colorectal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Càncer colorectal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcga-coad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCGA-COAD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtipus-molecular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subtipus molecular
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etiqueta-cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etiqueta CMS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fonts-de-dades-i-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fonts de dades i repositori
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fonts de dades i repositori">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gdc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manifest-gdc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manifest GDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample sheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synapse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synapse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dades-raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dades raw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dades-processades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dades processades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#artefacte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Artefacte
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitxer-versionat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitxer versionat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitxer-no-versionat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitxer no versionat
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-i-execucio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline i execució
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pipeline i execució">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-productiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa productiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mòdul
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descàrrega
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrenament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avaluació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gdc-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gdc-client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environmentyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        environment.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conda
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#joblib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        joblib
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preprocessament-i-particio-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament i partició de dades
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Preprocessament i partició de dades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Train
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-traintest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split train/test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-estratificat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split estratificat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-leakage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data leakage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplicacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplicació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files QC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtratge-de-gens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtratge de gens
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aprenentatge-automatic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge automàtic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aprenentatge automàtic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aprenentatge-automatic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge automàtic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aprenentatge-supervisat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge supervisat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classificacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classificació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-dentrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable d’entrada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-objectiu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable objectiu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logistic Regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random-forest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Forest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#svm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#svm-lineal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVM lineal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiperparametre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiperparàmetre
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class_weightbalanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class_weight='balanced'
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metriques-i-resultats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mètriques i resultats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mètriques i resultats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1-score
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 macro
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-weighted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 weighted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matriu-de-confusio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriu de confusió
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generalització
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploracio-i-visualitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploració i visualització
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploració i visualització">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analisi-exploratoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anàlisi exploratòria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reduccio-de-dimensionalitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducció de dimensionalitat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#umap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UMAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clúster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualització
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentacio-i-reproductibilitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentació i reproductibilitat
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentació i reproductibilitat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reproductibilitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproductibilitat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MkDocs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markdown
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repositori
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-de-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control de versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bioinformatica-i-dades-genomiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bioinformàtica i dades genòmiques
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bioinformàtica i dades genòmiques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rna-seq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RNA-seq
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressio-genica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressió gènica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matriu-dexpressio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriu d’expressió
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gen-protein-coding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gen protein-coding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comptatge-genic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comptatge gènic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#star-counts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STAR-Counts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FASTQ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alineament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alineament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalització
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformacio-logaritmica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformació logarítmica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch effect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cancer-colorectal-i-subtipus-cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Càncer colorectal i subtipus CMS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Càncer colorectal i subtipus CMS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancer-colorectal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Càncer colorectal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcga-coad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCGA-COAD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subtipus-molecular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subtipus molecular
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cms4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMS4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etiqueta-cms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etiqueta CMS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fonts-de-dades-i-repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fonts de dades i repositori
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fonts de dades i repositori">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gdc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manifest-gdc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manifest GDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-sheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample sheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synapse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synapse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dades-raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dades raw
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dades-processades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dades processades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#artefacte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Artefacte
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitxer-versionat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitxer versionat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fitxer-no-versionat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitxer no versionat
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-i-execucio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline i execució
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pipeline i execució">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etapa-productiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Etapa productiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mòdul
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descàrrega
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrenament" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrenament
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avaluacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avaluació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gdc-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gdc-client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environmentyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        environment.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conda" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conda
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#joblib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        joblib
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preprocessament-i-particio-de-dades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preprocessament i partició de dades
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Preprocessament i partició de dades">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Train
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-traintest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split train/test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-estratificat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split estratificat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-leakage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data leakage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplicacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplicació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files QC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtratge-de-gens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtratge de gens
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aprenentatge-automatic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge automàtic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aprenentatge automàtic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aprenentatge-automatic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge automàtic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aprenentatge-supervisat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aprenentatge supervisat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classificacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Classificació
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-dentrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable d’entrada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-objectiu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable objectiu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logistic Regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random-forest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Forest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#svm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#svm-lineal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVM lineal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hiperparametre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hiperparàmetre
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class_weightbalanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        class_weight='balanced'
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metriques-i-resultats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mètriques i resultats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mètriques i resultats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recall
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1-score
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-macro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 macro
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f1-weighted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 weighted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matriu-de-confusio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matriu de confusió
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generalitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generalització
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploracio-i-visualitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploració i visualització
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploració i visualització">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analisi-exploratoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anàlisi exploratòria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reduccio-de-dimensionalitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducció de dimensionalitat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#umap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UMAP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clúster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualitzacio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualització
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentacio-i-reproductibilitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentació i reproductibilitat
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentació i reproductibilitat">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reproductibilitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproductibilitat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MkDocs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#markdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Markdown
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repositori" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repositori
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-de-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control de versions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Git
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="glossari">Glossari</h1>
+<h2 id="bioinformatica-i-dades-genomiques">Bioinformàtica i dades genòmiques</h2>
+<h3 id="rna-seq">RNA-seq</h3>
+<p>Tècnica de seqüenciació utilitzada per quantificar l’expressió gènica. En aquest projecte, les dades RNA-seq s’utilitzen per representar l’activitat dels gens en mostres de càncer colorectal.</p>
+<h3 id="expressio-genica">Expressió gènica</h3>
+<p>Mesura de l’activitat d’un gen en una mostra biològica. En el pipeline, cada mostra es representa mitjançant un conjunt de valors d’expressió gènica.</p>
+<h3 id="matriu-dexpressio">Matriu d’expressió</h3>
+<p>Taula on les files o columnes representen mostres i gens. En aquest projecte, aquesta matriu és l’entrada principal dels models d’aprenentatge automàtic.</p>
+<h3 id="gen">Gen</h3>
+<p>Unitat d’informació genètica que pot estar associada a la producció d’ARN o proteïnes. En el projecte, els gens actuen com a variables d’entrada dels models.</p>
+<h3 id="gen-protein-coding">Gen protein-coding</h3>
+<p>Gen que codifica una proteïna. El preprocessament filtra els gens per conservar els gens codificants i reduir soroll en les dades.</p>
+<h3 id="comptatge-genic">Comptatge gènic</h3>
+<p>Valor numèric que representa el nombre de lectures associades a un gen en una mostra RNA-seq.</p>
+<h3 id="star-counts">STAR-Counts</h3>
+<p>Fitxers de comptatge generats a partir del workflow STAR. Aquests fitxers contenen valors d’expressió gènica ja quantificats i són l’entrada inicial del pipeline.</p>
+<h3 id="fastq">FASTQ</h3>
+<p>Format de fitxer que conté lectures crues de seqüenciació. Aquest projecte no treballa amb FASTQ perquè parteix de dades RNA-seq ja quantificades.</p>
+<h3 id="alineament">Alineament</h3>
+<p>Procés bioinformàtic que assigna lectures de seqüenciació a una regió del genoma o transcriptoma de referència. Aquest pas queda fora de l’abast del pipeline.</p>
+<h3 id="normalitzacio">Normalització</h3>
+<p>Procés que redueix diferències tècniques entre mostres per fer-les més comparables. En aquest projecte, el pipeline parteix de dades ja quantificades i aplica transformacions posteriors durant el preprocessament.</p>
+<h3 id="transformacio-logaritmica">Transformació logarítmica</h3>
+<p>Transformació numèrica aplicada per reduir l’escala dels comptatges i suavitzar valors molt grans. En el projecte s’utilitza <code>log2(x + 1)</code>.</p>
+<h3 id="batch-effect">Batch effect</h3>
+<p>Variabilitat tècnica no desitjada produïda per diferències entre lots, laboratoris, protocols o plataformes. Pot afectar l’anàlisi si no es controla adequadament.</p>
+<hr />
+<h2 id="cancer-colorectal-i-subtipus-cms">Càncer colorectal i subtipus CMS</h2>
+<h3 id="cancer-colorectal">Càncer colorectal</h3>
+<p>Tipus de càncer que afecta el còlon o el recte. En aquest projecte, s’estudien mostres de càncer de còlon de la cohort TCGA-COAD.</p>
+<h3 id="tcga-coad">TCGA-COAD</h3>
+<p>Cohort de The Cancer Genome Atlas corresponent a mostres de colon adenocarcinoma. És la cohort utilitzada com a font de dades principal del projecte.</p>
+<h3 id="cms">CMS</h3>
+<p>Sigla de Consensus Molecular Subtypes. És una classificació molecular del càncer colorectal basada en perfils transcriptòmics.</p>
+<h3 id="subtipus-molecular">Subtipus molecular</h3>
+<p>Grup de mostres que comparteixen patrons moleculars similars. En el projecte, els subtipus moleculars corresponen a CMS1, CMS2, CMS3 i CMS4.</p>
+<h3 id="cms1">CMS1</h3>
+<p>Subtipus CMS associat habitualment a característiques immunes i inestabilitat de microsatèl·lits. En el pipeline, CMS1 és una de les classes de classificació.</p>
+<h3 id="cms2">CMS2</h3>
+<p>Subtipus CMS sovint descrit com a canònic o epitelial. En el pipeline, CMS2 és una de les classes de classificació.</p>
+<h3 id="cms3">CMS3</h3>
+<p>Subtipus CMS associat a signatures metabòliques. En el pipeline, CMS3 és una de les classes de classificació i és la classe amb menys mostres en el conjunt utilitzat.</p>
+<h3 id="cms4">CMS4</h3>
+<p>Subtipus CMS associat a característiques mesenquimals i estromals. En el pipeline, CMS4 és una de les classes de classificació.</p>
+<h3 id="etiqueta-cms">Etiqueta CMS</h3>
+<p>Classe assignada a una mostra segons el seu subtipus CMS. Aquestes etiquetes s’utilitzen com a variable objectiu durant l’entrenament supervisat.</p>
+<hr />
+<h2 id="fonts-de-dades-i-repositori">Fonts de dades i repositori</h2>
+<h3 id="gdc">GDC</h3>
+<p>Sigla de Genomic Data Commons. És el portal des d’on es descarreguen els fitxers RNA-seq utilitzats en el projecte.</p>
+<h3 id="manifest-gdc">Manifest GDC</h3>
+<p>Fitxer que conté els identificadors dels fitxers que cal descarregar del GDC. El pipeline utilitza aquest manifest per reproduir la descàrrega de dades.</p>
+<h3 id="sample-sheet">Sample sheet</h3>
+<p>Fitxer de metadades que descriu les mostres i els fitxers associats. S’utilitza per relacionar fitxers descarregats amb informació de mostra.</p>
+<h3 id="synapse">Synapse</h3>
+<p>Plataforma utilitzada com a font externa de recursos relacionats amb les etiquetes CMS. En el projecte, la informació procedent de Synapse s’utilitza durant el preprocessament.</p>
+<h3 id="metadades">Metadades</h3>
+<p>Informació descriptiva sobre mostres, fitxers o etiquetes. En el repositori, les metadades es guarden a <code>data/metadata/</code>.</p>
+<h3 id="dades-raw">Dades raw</h3>
+<p>Dades originals descarregades abans del preprocessament. En el projecte es guarden a <code>data/raw/gdc/</code> i no es versionen.</p>
+<h3 id="dades-processades">Dades processades</h3>
+<p>Dades generades després del preprocessament i preparades per entrenar models. Es guarden a <code>data/processed/</code>.</p>
+<h3 id="artefacte">Artefacte</h3>
+<p>Fitxer generat durant l’execució del pipeline, com ara una matriu processada, un model entrenat, un informe de mètriques o una figura.</p>
+<h3 id="fitxer-versionat">Fitxer versionat</h3>
+<p>Fitxer inclòs al control de versions del repositori. En aquest projecte es versionen fitxers petits i necessaris per reconstruir el procés, com manifests i metadades.</p>
+<h3 id="fitxer-no-versionat">Fitxer no versionat</h3>
+<p>Fitxer exclòs del control de versions perquè és gran o regenerable. Inclou dades raw, dades processades, models, resultats i figures generades.</p>
+<hr />
+<h2 id="pipeline-i-execucio">Pipeline i execució</h2>
+<h3 id="pipeline">Pipeline</h3>
+<p>Seqüència ordenada d’etapes que transforma les dades inicials en resultats finals. En aquest projecte, el pipeline inclou descàrrega, preprocessament, entrenament i avaluació.</p>
+<h3 id="etapa-productiva">Etapa productiva</h3>
+<p>Etapa que genera fitxers utilitzats per una etapa posterior del pipeline. En aquest projecte, les etapes productives són descàrrega, preprocessament, entrenament i avaluació.</p>
+<h3 id="notebook">Notebook</h3>
+<p>Document interactiu que combina codi, resultats i explicacions. En el projecte, els notebooks s’utilitzen per exploració i anàlisi, però no substitueixen els scripts productius.</p>
+<h3 id="script">Script</h3>
+<p>Fitxer executable que actua com a punt d’entrada d’una etapa del pipeline. Els scripts es troben al directori <code>scripts/</code>.</p>
+<h3 id="modul">Mòdul</h3>
+<p>Fitxer de codi reutilitzable que conté funcions utilitzades pels scripts o notebooks. Els mòduls es troben al directori <code>src/</code>.</p>
+<h3 id="descarrega">Descàrrega</h3>
+<p>Primera etapa del pipeline. Obté els fitxers RNA-seq del GDC a partir del manifest guardat a <code>data/metadata/</code>.</p>
+<h3 id="preprocessament">Preprocessament</h3>
+<p>Etapa que transforma els fitxers descarregats en matrius preparades per a l’entrenament. Inclou filtratge, unió amb etiquetes CMS, separació train/test i transformació de valors.</p>
+<h3 id="entrenament">Entrenament</h3>
+<p>Etapa que ajusta els models d’aprenentatge automàtic amb les dades d’entrenament.</p>
+<h3 id="avaluacio">Avaluació</h3>
+<p>Etapa que calcula el rendiment dels models sobre el conjunt de test.</p>
+<h3 id="gdc-client"><code>gdc-client</code></h3>
+<p>Eina de línia de comandes utilitzada per descarregar fitxers del Genomic Data Commons.</p>
+<h3 id="environmentyml"><code>environment.yml</code></h3>
+<p>Fitxer que defineix l’entorn Conda del projecte i les dependències necessàries.</p>
+<h3 id="conda">Conda</h3>
+<p>Gestor d’entorns i paquets utilitzat per crear un entorn d’execució reproduïble.</p>
+<h3 id="joblib"><code>joblib</code></h3>
+<p>Llibreria utilitzada per guardar i carregar models entrenats en format <code>.joblib</code>.</p>
+<hr />
+<h2 id="preprocessament-i-particio-de-dades">Preprocessament i partició de dades</h2>
+<h3 id="train">Train</h3>
+<p>Conjunt de dades utilitzat per entrenar els models.</p>
+<h3 id="test">Test</h3>
+<p>Conjunt de dades reservat per avaluar els models després de l’entrenament.</p>
+<h3 id="split-traintest">Split train/test</h3>
+<p>Separació del dataset en conjunt d’entrenament i conjunt de test.</p>
+<h3 id="split-estratificat">Split estratificat</h3>
+<p>Separació train/test que manté proporcions similars de cada classe en els dos conjunts.</p>
+<h3 id="data-leakage">Data leakage</h3>
+<p>Problema que es produeix quan informació del conjunt de test influeix en l’entrenament o el preprocessament. Pot provocar una estimació massa optimista del rendiment.</p>
+<h3 id="seed">Seed</h3>
+<p>Valor fix utilitzat per controlar processos aleatoris i facilitar que els resultats siguin reproduïbles.</p>
+<h3 id="random_state"><code>random_state</code></h3>
+<p>Paràmetre utilitzat en algunes llibreries per fixar la seed d’un procés aleatori.</p>
+<h3 id="deduplicacio">Deduplicació</h3>
+<p>Procés d’eliminar mostres duplicades o repetides per evitar inconsistències en el dataset.</p>
+<h3 id="files-qc">Files QC</h3>
+<p>Files de control de qualitat presents en alguns fitxers d’expressió. S’eliminen durant el preprocessament perquè no representen gens utilitzables com a variables del model.</p>
+<h3 id="filtratge-de-gens">Filtratge de gens</h3>
+<p>Procés d’eliminar gens que no compleixen determinats criteris, com ara tenir comptatges massa baixos.</p>
+<hr />
+<h2 id="aprenentatge-automatic">Aprenentatge automàtic</h2>
+<h3 id="aprenentatge-automatic_1">Aprenentatge automàtic</h3>
+<p>Conjunt de tècniques que permeten entrenar models perquè aprenguin patrons a partir de dades.</p>
+<h3 id="aprenentatge-supervisat">Aprenentatge supervisat</h3>
+<p>Tipus d’aprenentatge automàtic en què el model s’entrena amb exemples que tenen una etiqueta coneguda.</p>
+<h3 id="classificacio">Classificació</h3>
+<p>Tasca d’aprenentatge supervisat en què el model assigna una classe a cada mostra.</p>
+<h3 id="variable-dentrada">Variable d’entrada</h3>
+<p>Característica utilitzada pel model per fer una predicció. En aquest projecte, les variables d’entrada són valors d’expressió gènica.</p>
+<h3 id="variable-objectiu">Variable objectiu</h3>
+<p>Classe que el model ha d’aprendre a predir. En aquest projecte, la variable objectiu és el subtipus CMS.</p>
+<h3 id="model">Model</h3>
+<p>Algorisme entrenat per predir etiquetes CMS a partir de dades d’expressió gènica.</p>
+<h3 id="logistic-regression">Logistic Regression</h3>
+<p>Model lineal de classificació utilitzat com a baseline. En el projecte s’utilitza per predir subtipus CMS.</p>
+<h3 id="random-forest">Random Forest</h3>
+<p>Model d’ensemble format per múltiples arbres de decisió. En el projecte s’utilitza com a alternativa no lineal.</p>
+<h3 id="svm">SVM</h3>
+<p>Sigla de Support Vector Machine. Model de classificació basat en la separació de classes mitjançant un hiperplà.</p>
+<h3 id="svm-lineal">SVM lineal</h3>
+<p>Variant de SVM amb kernel lineal. És útil en contextos amb moltes variables i relativament poques mostres.</p>
+<h3 id="hiperparametre">Hiperparàmetre</h3>
+<p>Paràmetre del model definit abans de l’entrenament, com ara <code>class_weight</code>, <code>max_iter</code> o <code>n_estimators</code>.</p>
+<h3 id="class_weightbalanced"><code>class_weight='balanced'</code></h3>
+<p>Configuració que ajusta el pes de les classes segons la seva freqüència. Ajuda a reduir l’efecte del desbalanceig de classes.</p>
+<h3 id="baseline">Baseline</h3>
+<p>Model de referència utilitzat per comparar el rendiment d’altres models.</p>
+<hr />
+<h2 id="metriques-i-resultats">Mètriques i resultats</h2>
+<h3 id="accuracy">Accuracy</h3>
+<p>Proporció de mostres classificades correctament respecte al total de mostres avaluades.</p>
+<h3 id="precision">Precision</h3>
+<p>Proporció de prediccions positives d’una classe que són correctes.</p>
+<h3 id="recall">Recall</h3>
+<p>Proporció de mostres reals d’una classe que el model detecta correctament.</p>
+<h3 id="f1-score">F1-score</h3>
+<p>Mitjana harmònica entre precision i recall. Resumeix l’equilibri entre totes dues mètriques.</p>
+<h3 id="f1-macro">F1 macro</h3>
+<p>Mitjana del F1-score de totes les classes donant el mateix pes a cada classe. És útil quan les classes estan desbalancejades.</p>
+<h3 id="f1-weighted">F1 weighted</h3>
+<p>Mitjana del F1-score ponderada pel nombre de mostres de cada classe.</p>
+<h3 id="support">Support</h3>
+<p>Nombre de mostres reals d’una classe en el conjunt d’avaluació.</p>
+<h3 id="matriu-de-confusio">Matriu de confusió</h3>
+<p>Taula que compara les classes reals amb les classes predites pel model. La diagonal representa encerts i les cel·les fora de la diagonal representen errors.</p>
+<h3 id="benchmark">Benchmark</h3>
+<p>Comparació sistemàtica entre models utilitzant el mateix conjunt de dades, el mateix protocol i les mateixes mètriques.</p>
+<h3 id="generalitzacio">Generalització</h3>
+<p>Capacitat d’un model per fer bones prediccions sobre dades no utilitzades durant l’entrenament.</p>
+<hr />
+<h2 id="exploracio-i-visualitzacio">Exploració i visualització</h2>
+<h3 id="analisi-exploratoria">Anàlisi exploratòria</h3>
+<p>Procés d’examinar les dades abans o després del preprocessament per entendre’n l’estructura, possibles patrons i limitacions.</p>
+<h3 id="reduccio-de-dimensionalitat">Reducció de dimensionalitat</h3>
+<p>Conjunt de tècniques que projecten dades amb moltes variables en un espai de menys dimensions per facilitar-ne la visualització.</p>
+<h3 id="pca">PCA</h3>
+<p>Sigla de Principal Component Analysis. Tècnica lineal de reducció de dimensionalitat que identifica direccions principals de variació.</p>
+<h3 id="umap">UMAP</h3>
+<p>Tècnica no lineal de reducció de dimensionalitat utilitzada per visualitzar estructures locals i possibles agrupacions.</p>
+<h3 id="cluster">Clúster</h3>
+<p>Grup de mostres que apareixen properes en un espai de característiques o en una visualització reduïda.</p>
+<h3 id="visualitzacio">Visualització</h3>
+<p>Representació gràfica de dades o resultats per facilitar-ne la interpretació.</p>
+<hr />
+<h2 id="documentacio-i-reproductibilitat">Documentació i reproductibilitat</h2>
+<h3 id="reproductibilitat">Reproductibilitat</h3>
+<p>Capacitat de tornar a executar una anàlisi amb les mateixes dades, el mateix codi i el mateix entorn per obtenir els mateixos resultats.</p>
+<h3 id="mkdocs">MkDocs</h3>
+<p>Eina utilitzada per generar la documentació tècnica del projecte a partir de fitxers Markdown.</p>
+<h3 id="github-pages">GitHub Pages</h3>
+<p>Servei utilitzat per publicar la documentació tècnica del projecte com a pàgina web.</p>
+<h3 id="markdown">Markdown</h3>
+<p>Llenguatge de marcatge lleuger utilitzat per escriure les pàgines de documentació.</p>
+<h3 id="repositori">Repositori</h3>
+<p>Espai on es desa el codi, la documentació i els fitxers versionats del projecte.</p>
+<h3 id="control-de-versions">Control de versions</h3>
+<p>Sistema que permet registrar canvis en el codi i la documentació. En aquest projecte es fa servir Git.</p>
+<h3 id="git">Git</h3>
+<p>Eina de control de versions utilitzada per gestionar l’evolució del projecte.</p>
+<h3 id="github">GitHub</h3>
+<p>Plataforma on s’allotja el repositori del projecte i des d’on es publica la documentació amb GitHub Pages.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
